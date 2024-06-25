@@ -1,15 +1,25 @@
 import ReactDOM from "react-dom/client";
-import { CheckoutPage } from "./pages/Checkout";
-import { PaymentCheckoutPage } from "./pages/PaymentCheckout";
-import { PaymentBillingPage } from "./pages/PaymentBilling";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { SuccessPage } from "./pages/Success";
+import { BrandpayCheckoutPage } from "./pages/brandpay/BrandpayCheckout";
+import { CheckoutPage } from "./pages/Checkout";
 import { FailPage } from "./pages/Fail";
+import { PaymentBillingPage } from "./pages/payment/PaymentBilling";
+import { PaymentCheckoutPage } from "./pages/payment/PaymentCheckout";
+import { SuccessPage } from "./pages/Success";
 
 const router = createBrowserRouter([
   {
     path: "checkout",
     element: <CheckoutPage />,
+  },
+  {
+    path: "brandpay",
+    children: [
+      {
+        path: "checkout",
+        element: <BrandpayCheckoutPage />,
+      },
+    ],
   },
   {
     path: "payment",

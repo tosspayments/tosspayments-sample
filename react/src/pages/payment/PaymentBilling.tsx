@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "../App.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function PaymentBillingPage() {

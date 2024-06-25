@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "../App.css";
 
 // ------  SDK 초기화 ------
 // TODO: clientKey는 개발자센터의 API 개별 연동 키 > 결제창 연동에 사용하려할 MID > 클라이언트 키로 바꾸세요.
