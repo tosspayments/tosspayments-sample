@@ -12,12 +12,17 @@ const router = createBrowserRouter([
     element: <CheckoutPage />,
   },
   {
-    path: "/payment/checkout",
-    element: <PaymentCheckoutPage />,
-  },
-  {
-    path: "/payment/billing",
-    element: <PaymentBillingPage />,
+    path: "/payment",
+    children: [
+      {
+        path: "checkout",
+        element: <PaymentCheckoutPage />,
+      },
+      {
+        path: "billing",
+        element: <PaymentBillingPage />,
+      },
+    ],
   },
   {
     path: "/success",
@@ -30,5 +35,5 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <RouterProvider router={router} />  
+  <RouterProvider router={router} />
 );
