@@ -8,11 +8,11 @@ import { FailPage } from "./pages/Fail";
 
 const router = createBrowserRouter([
   {
-    path: "/checkout",
+    path: "checkout",
     element: <CheckoutPage />,
   },
   {
-    path: "/payment",
+    path: "payment",
     children: [
       {
         path: "checkout",
@@ -25,11 +25,11 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/success",
+    path: "success",
     element: <SuccessPage />,
   },
   {
-    path: "/fail",
+    path: "fail",
     element: <FailPage />,
   },
 ]);
