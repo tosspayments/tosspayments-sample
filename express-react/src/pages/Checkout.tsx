@@ -23,9 +23,9 @@ export function CheckoutPage() {
   useEffect(() => {
     async function fetchPaymentWidgets() {
       try {
+        // FIXME: loadPayment 메소드로 변경 필요
         const tossPayments = TossPayments(clientKey);
 
-        // FIXME: loadPayment 메소드로 변경 필요
         // 회원 결제
         const widgets = tossPayments.widgets({
           customerKey,

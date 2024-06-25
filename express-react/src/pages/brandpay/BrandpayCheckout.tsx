@@ -17,7 +17,7 @@ export function BrandpayCheckoutPage() {
       try {
         // FIXME: loadPayment 메소드로 변경 필요
         const tossPayments = TossPayments(clientKey);
-        // 회원 결제
+
         const brandpay = tossPayments.brandpay({
           customerKey,
           // TODO: 개발자센터의 브랜드페이 > Redirect URL 에 아래 URL 을 추가하세요.
