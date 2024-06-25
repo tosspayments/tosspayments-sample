@@ -4,8 +4,10 @@ body {
 .p {
   padding: 0;
   margin: 0;
-  font-family: Toss Product Sans, -apple-system, BlinkMacSystemFont, Bazier Square, Noto Sans KR, Segoe UI, Apple SD Gothic Neo, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji,
-    Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  font-family: Toss Product Sans, -apple-system, BlinkMacSystemFont,
+    Bazier Square, Noto Sans KR, Segoe UI, Apple SD Gothic Neo, Roboto,
+    Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji,
+    Segoe UI Symbol, Noto Color Emoji;
   color: #4e5968;
   word-break: keep-all;
   word-wrap: break-word;
@@ -89,8 +91,10 @@ body {
 
 body,
 html {
-  font-family: Toss Product Sans, Tossface, -apple-system, BlinkMacSystemFont, Bazier Square, Noto Sans KR, Segoe UI, Apple SD Gothic Neo, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji,
-    Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  font-family: Toss Product Sans, Tossface, -apple-system, BlinkMacSystemFont,
+    Bazier Square, Noto Sans KR, Segoe UI, Apple SD Gothic Neo, Roboto,
+    Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji,
+    Segoe UI Symbol, Noto Color Emoji;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   word-break: keep-all;
@@ -123,6 +127,30 @@ html {
   width: 250px;
 }
 
+.button2 {
+  color: #000000;
+  background-color: #ffffff;
+  margin: 30px 15px 0px 15px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 18px;
+  white-space: nowrap;
+  text-align: center;
+  /* vertical-align: middle; */
+  cursor: pointer;
+  border: 1px solid #000000;
+  user-select: none;
+  transition: background 0.2s ease, color 0.1s ease;
+  text-decoration: none;
+  border-radius: 7px;
+  padding: 11px 16px;
+  width: 125px;
+}
+
+.button2.active {
+  background-color: rgb(229 239 255);
+}
+
 .button:hover {
   color: #fff;
   background-color: #1b64da;
@@ -137,8 +165,10 @@ input:disabled {
 button,
 input,
 textarea {
-  font-family: Toss Product Sans, -apple-system, BlinkMacSystemFont, Bazier Square, Noto Sans KR, Segoe UI, Apple SD Gothic Neo, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji,
-    Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  font-family: Toss Product Sans, -apple-system, BlinkMacSystemFont,
+    Bazier Square, Noto Sans KR, Segoe UI, Apple SD Gothic Neo, Roboto,
+    Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji,
+    Segoe UI Symbol, Noto Color Emoji;
 }
 
 .color--grey800 {

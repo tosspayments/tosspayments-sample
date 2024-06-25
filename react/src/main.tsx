@@ -1,20 +1,25 @@
 import ReactDOM from "react-dom/client";
 import { CheckoutPage } from "./pages/Checkout";
+import { PaymentCheckoutPage } from "./pages/PaymentCheckout";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { SuccessPage } from "./pages/Success";
 import { FailPage } from "./pages/Fail";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/checkout",
     element: <CheckoutPage />,
   },
   {
-    path: "success",
+    path: "/payment/checkout",
+    element: <PaymentCheckoutPage />,
+  },
+  {
+    path: "/success",
     element: <SuccessPage />,
   },
   {
-    path: "fail",
+    path: "/fail",
     element: <FailPage />,
   },
 ]);
