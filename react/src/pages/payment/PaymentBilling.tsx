@@ -84,47 +84,49 @@ export function PaymentBillingPage() {
   }
 
   return (
-    <div className="box_section" style={{ width: "600px" }}>
-      <img
-        width="100px"
-        src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png"
-      />
-      <h2 id="title">
-        {billingConfirmed
-          ? "빌링키로 결제에 성공했어요"
-          : "빌링키 발급이 완료했어요"}
-      </h2>
+    <div className="wrapper">
+      <div className="box_section" style={{ width: "600px" }}>
+        <img
+          width="100px"
+          src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png"
+        />
+        <h2 id="title">
+          {billingConfirmed
+            ? "빌링키로 결제에 성공했어요"
+            : "빌링키 발급을 완료했어요"}
+        </h2>
 
-      {billingConfirmed === false ? (
-        <button id="confirm" className="button" onClick={confirm}>
-          강제로 정기결제 실행시키기
-        </button>
-      ) : null}
+        {billingConfirmed === false ? (
+          <button id="confirm" className="button" onClick={confirm}>
+            강제로 정기결제 실행시키기
+          </button>
+        ) : null}
 
-      <div className="p-grid" style={{ marginTop: "30px" }}>
-        <button
-          className="button p-grid-col5"
-          onClick={() => {
-            location.href =
-              "https://docs.tosspayments.com/guides/payment/integration";
-          }}>
-          연동 문서
-        </button>
-        <button
-          className="button p-grid-col5"
-          onClick={() => {
-            location.href = "https://discord.gg/A4fRFXQhRu";
-          }}
-          style={{ backgroundColor: "#e8f3ff", color: "#1b64da" }}>
-          실시간 문의
-        </button>
-      </div>
-      <div
-        className="box_section"
-        style={{ width: "600px", textAlign: "left" }}>
-        <b>Response Data :</b>
-        <div id="response" style={{ whiteSpace: "initial" }}>
-          {responseData && <pre>{JSON.stringify(responseData, null, 4)}</pre>}
+        <div className="p-grid" style={{ marginTop: "30px" }}>
+          <button
+            className="button p-grid-col5"
+            onClick={() => {
+              location.href =
+                "https://docs.tosspayments.com/guides/payment/integration";
+            }}>
+            연동 문서
+          </button>
+          <button
+            className="button p-grid-col5"
+            onClick={() => {
+              location.href = "https://discord.gg/A4fRFXQhRu";
+            }}
+            style={{ backgroundColor: "#e8f3ff", color: "#1b64da" }}>
+            실시간 문의
+          </button>
+        </div>
+        <div
+          className="box_section"
+          style={{ width: "600px", textAlign: "left" }}>
+          <b>Response Data :</b>
+          <div id="response" style={{ whiteSpace: "initial" }}>
+            {responseData && <pre>{JSON.stringify(responseData, null, 4)}</pre>}
+          </div>
         </div>
       </div>
     </div>
