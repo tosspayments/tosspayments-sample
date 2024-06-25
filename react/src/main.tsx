@@ -1,6 +1,7 @@
 import ReactDOM from "react-dom/client";
 import { CheckoutPage } from "./pages/Checkout";
 import { PaymentCheckoutPage } from "./pages/PaymentCheckout";
+import { PaymentBillingPage } from "./pages/PaymentBilling";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { SuccessPage } from "./pages/Success";
 import { FailPage } from "./pages/Fail";
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
   {
     path: "/payment/checkout",
     element: <PaymentCheckoutPage />,
+  },
+  {
+    path: "/payment/billing",
+    element: <PaymentBillingPage />,
   },
   {
     path: "/success",
