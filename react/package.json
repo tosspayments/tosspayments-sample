@@ -1,7 +1,7 @@
 {
-  "name": "express-react",
+  "name": "react",
   "version": "1.0.0",
-  "description": "TossPayments Express + React Sample",
+  "description": "TossPayments React Sample",
   "type": "module",
   "scripts": {
     "dev": "vite",
