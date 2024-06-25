@@ -2,20 +2,21 @@ import { useEffect, useState } from "react";
 import "../App.css";
 
 // TODO: clientKey는 개발자센터의 결제위젯 연동 키 > 클라이언트 키로 바꾸세요.
+// TODO: server.js 의 secretKey 또한 결제위젯 연동 키가 아닌 API 개별 연동 키의 시크릿 키로 변경해야 합니다.
 // TODO: 구매자의 고유 아이디를 불러와서 customerKey로 설정하세요. 이메일・전화번호와 같이 유추가 가능한 값은 안전하지 않습니다.
 // @docs https://docs.tosspayments.com/reference/widget-sdk#sdk-설치-및-초기화
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 const customerKey = generateRandomString();
 
+const amount = {
+  currency: "KRW",
+  value: 50_000,
+};
+
 export function CheckoutPage() {
   const [ready, setReady] = useState(false);
   // FIXME: 타입 추가
   const [widgets, setWidgets] = useState<any>(null);
-
-  const amount = {
-    currency: 'KRW',
-    value: 50_000,
-  }
 
   useEffect(() => {
     async function fetchPaymentWidgets() {
@@ -26,7 +27,7 @@ export function CheckoutPage() {
         // 회원 결제
         const widgets = tossPayments.widgets({
           customerKey,
-        })
+        });
         // 비회원 결제
         // const widgets = tossPayments.widgets({customerKey: TossPayments.ANONYMOUS});
 
@@ -35,7 +36,7 @@ export function CheckoutPage() {
       } catch (error) {
         console.error("Error fetching payment widget:", error);
       }
-    };
+    }
 
     fetchPaymentWidgets();
   }, [clientKey, customerKey]);
@@ -54,19 +55,22 @@ export function CheckoutPage() {
       // ------  결제 UI 렌더링 ------
       // @docs https://docs.tosspayments.com/reference/widget-sdk#renderpaymentmethods선택자-결제-금액-옵션
       await widgets.renderPaymentMethods({
-        selector: '#payment-method',
+        selector: "#payment-method",
         // 렌더링하고 싶은 결제 UI의 variantKey
         // 결제 수단 및 스타일이 다른 멀티 UI를 직접 만들고 싶다면 계약이 필요해요.
         // @docs https://docs.tosspayments.com/guides/payment-widget/admin#멀티-결제-ui
-        variantKey: "DEFAULT"
+        variantKey: "DEFAULT",
       });
 
       // ------  이용약관 UI 렌더링 ------
       // @docs https://docs.tosspayments.com/reference/widget-sdk#renderagreement선택자-옵션
-      await widgets.renderAgreement({ selector: "#agreement", variantKey: "AGREEMENT" });
+      await widgets.renderAgreement({
+        selector: "#agreement",
+        variantKey: "AGREEMENT",
+      });
 
       setReady(true);
-    };
+    }
 
     renderPaymentWidgets();
   }, [widgets]);
@@ -81,7 +85,9 @@ export function CheckoutPage() {
         {/* 쿠폰 체크박스 */}
         <div style={{ paddingLeft: "24px" }}>
           <div className="checkable typography--p">
-            <label htmlFor="coupon-box" className="checkable__label typography--regular">
+            <label
+              htmlFor="coupon-box"
+              className="checkable__label typography--regular">
               <input
                 id="coupon-box"
                 className="checkable__input"
@@ -99,7 +105,7 @@ export function CheckoutPage() {
 
                     return;
                   }
-      
+
                   await widgets.setAmount(amount);
                 }}
               />
@@ -132,8 +138,7 @@ export function CheckoutPage() {
               // 에러 처리하기
               console.error(error);
             }
-          }}
-        >
+          }}>
           결제하기
         </button>
       </div>

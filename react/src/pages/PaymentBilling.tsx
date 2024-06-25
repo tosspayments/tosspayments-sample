@@ -8,31 +8,31 @@ export function PaymentBillingPage() {
   const [responseData, setResponseData] = useState(null);
   const [billingConfirmed, setBillingConfirmed] = useState(false);
 
-  // 서버로 빌링키 발급을 위해 authKey 를 보내세요.
-  async function issueBillingKey() {
-    const requestData = {
-      customerKey: searchParams.get("customerKey"),
-      authKey: searchParams.get("authKey"),
-    };
+  useEffect(() => {
+    // 서버로 빌링키 발급을 위해 authKey 를 보내세요.
+    async function issueBillingKey() {
+      const requestData = {
+        customerKey: searchParams.get("customerKey"),
+        authKey: searchParams.get("authKey"),
+      };
 
-    const response = await fetch("/issue-billing-key", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestData),
-    });
+      const response = await fetch("/api/issue-billing-key", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
 
-    const json = await response.json();
+      const json = await response.json();
 
-    if (!response.ok) {
-      throw { message: json.message, code: json.code };
+      if (!response.ok) {
+        throw { message: json.message, code: json.code };
+      }
+
+      return json;
     }
 
-    return json;
-  }
-
-  useEffect(() => {
     issueBillingKey()
       .then(function (data) {
         // TODO: 빌링키 발급에 성공했을 경우 UI 처리 로직을 구현하세요.
@@ -57,7 +57,7 @@ export function PaymentBillingPage() {
         customerName: "김토스",
       };
 
-      const response = await fetch("/confirm-billing", {
+      const response = await fetch("/api/confirm-billing", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
