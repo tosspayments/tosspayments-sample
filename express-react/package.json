@@ -1,7 +1,7 @@
 {
-  "name": "react",
+  "name": "express-react",
   "version": "1.0.0",
-  "description": "TossPayments React Sample",
+  "description": "TossPayments Express + React Sample",
   "scripts": {
     "dev": "concurrently \"vite\" \"nodemon server.js\"",
     "build": "tsc && vite build"
