@@ -6,6 +6,7 @@ import { FailPage } from "./pages/Fail";
 import { PaymentBillingPage } from "./pages/payment/PaymentBilling";
 import { PaymentCheckoutPage } from "./pages/payment/PaymentCheckout";
 import { SuccessPage } from "./pages/Success";
+import "./App.css";
 
 const router = createBrowserRouter([
   {
