@@ -49,6 +49,42 @@ app.post("/confirm", function (req, res) {
   });
 });
 
+// 브랜드페이 Access Token 발급
+app.get("/callback-auth", function (req, res) {
+  const { customerKey, code } = req.query;
+
+  // 요청으로 받은 customerKey 와 요청한 주체가 동일인인지 검증 후 Access Token 발급 API 를 호출하세요.
+  // @docs https://docs.tosspayments.com/reference/brandpay#access-token-발급
+  fetch(
+    "https://api.tosspayments.com/v1/brandpay/authorizations/access-token",
+    {
+      method: "POST",
+      headers: {
+        Authorization: encryptedSecretKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        grantType: "AuthorizationCode",
+        customerKey,
+        code,
+      }),
+    }
+  ).then(async function (response) {
+    const result = await response.json();
+    console.log(result);
+
+    if (!response.ok) {
+      // TODO: 발급 실패 비즈니스 로직을 구현하세요.
+      res.status(response.status).json(result);
+
+      return;
+    }
+
+    // TODO: 발급 성공 비즈니스 로직을 구현하세요.
+    res.status(response.status).json(result);
+  });
+});
+
 const billingKeyMap = new Map();
 
 // 빌링키 발급
