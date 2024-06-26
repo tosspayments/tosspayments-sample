@@ -13,23 +13,13 @@ const amount = {
   value: 50_000,
 };
 
-// FIXME: 타입 import
-type PaymentMethod =
-  | "CARD"
-  | "TRANSFER"
-  | "VIRTUAL_ACCOUNT"
-  | "MOBILE_PHONE"
-  | "CULTURE_GIFT_CERTIFICATE"
-  | "FOREIGN_EASY_PAY";
-
 export function PaymentCheckoutPage() {
-  // FIXME: 타입 추가
-  const [payment, setPayment] = useState<any>(null);
+  const [payment, setPayment] = useState(null);
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<PaymentMethod | null>(null);
+    useState(null);
 
-  function selectPaymentMethod(method: PaymentMethod) {
+  function selectPaymentMethod(method) {
     setSelectedPaymentMethod(method);
   }
 

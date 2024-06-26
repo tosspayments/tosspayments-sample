@@ -17,8 +17,7 @@ export function CheckoutPage() {
   const navigate = useNavigate();
 
   const [ready, setReady] = useState(false);
-  // FIXME: 타입 추가
-  const [widgets, setWidgets] = useState<any>(null);
+  const [widgets, setWidgets] = useState(null);
 
   useEffect(() => {
     async function fetchPaymentWidgets() {

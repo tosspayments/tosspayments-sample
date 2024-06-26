@@ -9,8 +9,7 @@ const clientKey = "test_ck_N5OWRapdA8dbwLJy01BVo1zEqZKL";
 const customerKey = generateRandomString();
 
 export function BrandpayCheckoutPage() {
-  // FIXME: 타입 추가
-  const [brandpay, setBrandpay] = useState<any>(null);
+  const [brandpay, setBrandpay] = useState(null);
 
   useEffect(() => {
     async function fetchBrandpay() {

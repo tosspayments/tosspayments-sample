@@ -1,12 +1,12 @@
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "./App.css";
 import { BrandpayCheckoutPage } from "./pages/brandpay/BrandpayCheckout";
 import { CheckoutPage } from "./pages/Checkout";
 import { FailPage } from "./pages/Fail";
 import { PaymentBillingPage } from "./pages/payment/PaymentBilling";
 import { PaymentCheckoutPage } from "./pages/payment/PaymentCheckout";
 import { SuccessPage } from "./pages/Success";
-import "./App.css";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +45,6 @@ const router = createBrowserRouter([
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <RouterProvider router={router} />
 );
