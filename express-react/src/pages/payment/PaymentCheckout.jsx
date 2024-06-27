@@ -36,7 +36,6 @@ export function PaymentCheckoutPage() {
         // 비회원 결제
         // const payment = tossPayments.payment({customerKey: TossPayments.ANONYMOUS});
 
-        // const loadedPayment = await loadPayment(clientKey, customerKey);
         setPayment(payment);
       } catch (error) {
         console.error("Error fetching payment:", error);

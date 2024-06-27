@@ -32,7 +32,6 @@ export function CheckoutPage() {
         // 비회원 결제
         // const widgets = tossPayments.widgets({customerKey: TossPayments.ANONYMOUS});
 
-        // const loadedWidgets = await loadPaymentWidgets(clientKey, customerKey);
         setWidgets(widgets);
       } catch (error) {
         console.error("Error fetching payment widget:", error);
