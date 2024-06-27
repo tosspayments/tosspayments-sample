@@ -46,7 +46,7 @@ export function BrandpayCheckoutPage() {
       failUrl: window.location.origin + "/fail",
       customerEmail: "customer123@gmail.com",
       customerName: "김토스",
-      // customerMobilePhone: "01012341234",
+      customerMobilePhone: "01012341234",
     });
   }
 
