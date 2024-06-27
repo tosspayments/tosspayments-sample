@@ -1,3 +1,4 @@
+import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -22,8 +23,7 @@ export function CheckoutPage() {
   useEffect(() => {
     async function fetchPaymentWidgets() {
       try {
-        // FIXME: loadPayment 메소드로 변경 필요
-        const tossPayments = TossPayments(clientKey);
+        const tossPayments = await loadTossPayments(clientKey);
 
         // 회원 결제
         const widgets = tossPayments.widgets({

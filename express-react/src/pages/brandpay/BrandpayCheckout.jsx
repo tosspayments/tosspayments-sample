@@ -1,3 +1,4 @@
+import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { useEffect, useState } from "react";
 
 // ------  SDK 초기화 ------
@@ -14,8 +15,7 @@ export function BrandpayCheckoutPage() {
   useEffect(() => {
     async function fetchBrandpay() {
       try {
-        // FIXME: loadPayment 메소드로 변경 필요
-        const tossPayments = TossPayments(clientKey);
+        const tossPayments = await loadTossPayments(clientKey);
 
         const brandpay = tossPayments.brandpay({
           customerKey,
