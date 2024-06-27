@@ -1,2 +1,6 @@
 /express-javascript/node_modules/
 /express-javascript/.idea
+
+/express-react/node_modules/
+/express-javascript/.idea
+/express-react/dist/
