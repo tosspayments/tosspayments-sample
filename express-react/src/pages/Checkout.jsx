@@ -29,6 +29,7 @@ export function CheckoutPage() {
         const widgets = tossPayments.widgets({
           customerKey,
         });
+
         // 비회원 결제
         // const widgets = tossPayments.widgets({customerKey: TossPayments.ANONYMOUS});
 
