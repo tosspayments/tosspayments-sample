@@ -100,7 +100,7 @@ export function PaymentBillingPage() {
           <button
             className="button p-grid-col5"
             onClick={() => {
-              location.href = "https://docs.tosspayments.com/guides/payment/integration";
+              location.href = "https://docs.tosspayments.com/guides/v2/billing/integration";
             }}
           >
             연동 문서

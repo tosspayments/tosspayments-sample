@@ -1,6 +1,6 @@
 # 토스페이먼츠 Express + Javascript 샘플 프로젝트
 
-토스페이먼츠 JavaScript SDK로 결제 과정을 구현한 Express + Javascript 샘플 프로젝트입니다. 자세한 연동 방법과 결제 과정은 [공식 연동 문서](https://docs.tosspayments.com/guides/standard/integration)에서 확인하세요.
+토스페이먼츠 JavaScript SDK로 결제 과정을 구현한 Express + Javascript 샘플 프로젝트입니다. 자세한 연동 방법과 결제 과정은 [공식 연동 문서](https://docs.tosspayments.com/guides/v2/get-started)에서 확인하세요.
 
 ## 준비하기
 
