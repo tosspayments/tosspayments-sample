@@ -50,7 +50,6 @@ export function BrandpayCheckoutPage() {
       failUrl: window.location.origin + "/fail", // 결제 요청이 실패하면 리다이렉트되는 URL
       customerEmail: "customer123@gmail.com",
       customerName: "김토스",
-      customerMobilePhone: "01012341234",
     });
   }
 
