@@ -34,9 +34,16 @@ $ v18.18.2
 샘플에 있는 키로 연동이 가능하지만, 내 테스트 연동 키를 사용하면 테스트 결제내역, 웹훅 기능을 사용할 수 있어요. 내 테스트 연동 키는 [개발자센터](https://developers.tosspayments.com/my/api-keys)에서 확인할 수 있습니다. 더 자세한 내용은 [API 키 가이드](https://docs.tosspayments.com/reference/using-api/api-keys)를 참고하세요.
 
 - **클라이언트 키**
+
   - `pages/Checkout.jsx` 파일에 있는 `clientKey`를 내 결제위젯 연동 클라이언트 키로 수정하세요.
   - `pages/payment/PaymentCheckout.jsx`, `pages/brandpay/BrandpayCheckout.jsx` 파일에 있는 `clientKey`를 내 API 개별 연동 클라이언트 키로 수정하세요.
-- **시크릿 키**: `server.js` 파일에 있는 `secretKey`를 내 결제위젯 시크릿 키로 수정하세요. **시크릿 키는 외부에 노출되면 안 됩니다.**
+
+- **시크릿 키**
+
+  - **결제위젯**: `server.js` 파일에 있는 `widgetSecretKey`를 내 결제위젯 시크릿 키로 수정하세요.
+  - **결제창 및 브랜드페이**: `server.js` 파일에 있는 `apiSecretKey`를 내 API 개별 연동 시크릿 키로 수정하세요.
+
+  \* 시크릿 키는 외부에 절대 노출되면 안 됩니다.
 
 ## 더 알아보기
 
