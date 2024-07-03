@@ -4,14 +4,12 @@
 
 ## 준비하기
 
-샘플 프로젝트를 사용하려면 [Node.js](https://nodejs.org/ko/) 18.0.0 이상의 버전이 필요합니다. 먼저 내 컴퓨터의 Node.js 버전을 확인하세요.
+샘플 프로젝트를 사용하려면 [Node.js](https://nodejs.org/ko/) 18.0.0 이상의 버전이 필요합니다. 먼저 내 컴퓨터의 Node.js 버전을 확인하세요. Node.js가 없다면 [Node.js 홈페이지](https://nodejs.org/ko/download/)에서 다운로드하거나 [nvm](https://github.com/nvm-sh/nvm#about)(Node Version Manager)을 사용해서 설치하세요.
 
 ```sh
 $ node -v
 $ v18.18.2
 ```
-
-Node.js가 없다면 [Node.js 홈페이지](https://nodejs.org/ko/download/)에서 다운로드하거나 [nvm](https://github.com/nvm-sh/nvm#about)(Node Version Manager)을 사용해서 설치하세요.
 
 ## 실행하기
 
@@ -38,15 +36,7 @@ Node.js가 없다면 [Node.js 홈페이지](https://nodejs.org/ko/download/)에�
 - **클라이언트 키**: `public/checkout.html` 파일에 있는 `clientKey`를 내 결제위젯 클라이언트 키로 수정하세요.
 - **시크릿 키**: `server.js` 파일에 있는 `secretKey`를 내 결제위젯 시크릿 키로 수정하세요. **시크릿 키는 외부에 노출되면 안 됩니다.**
 
-[상점의 테스트 API 키](https://developers.tosspayments.com/my/api-keys)는 개발자센터에서 확인할 수 있습니다. 더 자세한 내용은 [API 키 가이드](https://docs.tosspayments.com/reference/using-api/api-keys)를 참고하세요.
-
-## Q. 결제 요청 후 계속 로딩 중인 화면이 보인다면?
-
-아직 결제 요청 중이에요. 이어서 요청 결과를 확인한 뒤, 결제 승인 API 호출까지 해야 결제가 완료돼요. iframe을 사용하면 요청 결과 페이지(`successUrl`, `failUrl`)로 이동할 수가 없으니 유의하세요.
-
-
 ## 더 알아보기
 
-- 토스페이먼츠 개발 블로그 👉 [30분 안에 결제 페이지 개발하기 (ft. 결제위젯)](https://velog.io/@tosspayments/결제위젯으로-30분안에-결제-페이지-개발하기)
-
-- 토스페이먼츠 연동 문서 👉 [결제위젯 이해하기](https://docs.tosspayments.com/guides/payment-widget/overview) | [결제위젯 연동 문서](https://docs.tosspayments.com/guides/payment-widget/integration)
+- [토스페이먼츠 공식 문서](https://docs.tosspayments.com/guides/v2/get-started)
+- [1:1 채팅(Discord)](https://discord.com/invite/VdkfJnknD9)
