@@ -7,6 +7,7 @@ import { FailPage } from "./pages/Fail";
 import { PaymentBillingPage } from "./pages/payment/PaymentBilling";
 import { PaymentCheckoutPage } from "./pages/payment/PaymentCheckout";
 import { SuccessPage } from "./pages/Success";
+import { SuccessPaymentPage } from "./pages/payment/Success";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
         path: "billing",
         element: <PaymentBillingPage />,
       },
+      {
+        path: "success",
+        element: <SuccessPaymentPage />,
+      },
     ],
   },
   {
@@ -45,6 +50,4 @@ const router = createBrowserRouter([
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <RouterProvider router={router} />
-);
+ReactDOM.createRoot(document.getElementById("root")).render(<RouterProvider router={router} />);
