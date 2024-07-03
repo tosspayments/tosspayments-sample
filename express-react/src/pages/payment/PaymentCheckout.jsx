@@ -1,4 +1,4 @@
-import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
+import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
 import { useEffect, useState } from "react";
 
 // ------  SDK 초기화 ------
@@ -34,7 +34,7 @@ export function PaymentCheckoutPage() {
           customerKey,
         });
         // 비회원 결제
-        // const payment = tossPayments.payment({customerKey: TossPayments.ANONYMOUS});
+        // const payment = tossPayments.payment({ customerKey: ANONYMOUS });
 
         setPayment(payment);
       } catch (error) {
