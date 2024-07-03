@@ -11,7 +11,7 @@ const customerKey = generateRandomString();
 
 const amount = {
   currency: "KRW",
-  value: 50_000,
+  value: 50000,
 };
 
 export function CheckoutPage() {
