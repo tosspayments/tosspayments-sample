@@ -14,7 +14,7 @@ export function PaymentSuccessPage() {
         paymentKey: searchParams.get("paymentKey"),
       };
 
-      const response = await fetch("/api/confirm", {
+      const response = await fetch("/api/confirm/payment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

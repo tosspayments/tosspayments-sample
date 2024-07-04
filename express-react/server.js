@@ -51,7 +51,7 @@ app.post("/confirm/widget", function (req, res) {
 });
 
 // 결제창 승인
-app.post("/confirm", function (req, res) {
+app.post("/confirm/payment", function (req, res) {
   const { paymentKey, orderId, amount } = req.body;
 
   // 결제 승인 API를 호출하세요.
