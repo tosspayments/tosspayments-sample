@@ -44,18 +44,22 @@
       async function requestPayment() {
         // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
         // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
-        await brandpay.requestPayment({
-          amount: {
-            currency: "KRW",
-            value: 50000,
-          },
-          orderId: generateRandomString(), // 고유 주문번호
-          orderName: "토스 티셔츠 외 2건",
-          successUrl: window.location.origin + "/success.html", // 결제 요청이 성공하면 리다이렉트되는 URL
-          failUrl: window.location.origin + "/fail.html", // 결제 요청이 실패하면 리다이렉트되는 URL
-          customerEmail: "customer123@gmail.com",
-          customerName: "김토스",
-        });
+        await brandpay
+          .requestPayment({
+            amount: {
+              currency: "KRW",
+              value: 50000,
+            },
+            orderId: generateRandomString(), // 고유 주문번호
+            orderName: "토스 티셔츠 외 2건",
+            successUrl: window.location.origin + `/brandpay/success.html?customerKey=${customerKey}&`, // 결제 요청이 성공하면 리다이렉트되는 URL
+            failUrl: window.location.origin + "/fail.html", // 결제 요청이 실패하면 리다이렉트되는 URL
+            customerEmail: "customer123@gmail.com",
+            customerName: "김토스",
+          })
+          .then((res) => {
+            window.location.href = successUrl;
+          });
       }
 
       async function addPaymentMethod() {
