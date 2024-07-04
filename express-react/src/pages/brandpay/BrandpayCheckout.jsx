@@ -46,7 +46,7 @@ export function BrandpayCheckoutPage() {
       },
       orderId: generateRandomString(), // 고유 주문번호
       orderName: "토스 티셔츠 외 2건",
-      successUrl: window.location.origin + "/success", // 결제 요청이 성공하면 리다이렉트되는 URL
+      successUrl: window.location.origin + `/brandpay/success?customerKey=${customerKey}&`, // 결제 요청이 성공하면 리다이렉트되는 URL
       failUrl: window.location.origin + "/fail", // 결제 요청이 실패하면 리다이렉트되는 URL
       customerEmail: "customer123@gmail.com",
       customerName: "김토스",

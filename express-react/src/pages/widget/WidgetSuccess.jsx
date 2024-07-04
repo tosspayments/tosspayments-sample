@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
-export function SuccessPaymentPage() {
+export function WidgetSuccessPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [responseData, setResponseData] = useState(null);
@@ -14,7 +14,7 @@ export function SuccessPaymentPage() {
         paymentKey: searchParams.get("paymentKey"),
       };
 
-      const response = await fetch("/api/confirm", {
+      const response = await fetch("/api/confirm/widget", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -16,7 +16,7 @@ const apiSecretKey = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R";
 const encryptedWidgetSecretKey = "Basic " + Buffer.from(widgetSecretKey + ":").toString("base64");
 const encryptedApiSecretKey = "Basic " + Buffer.from(apiSecretKey + ":").toString("base64");
 
-// 결제 승인
+// 결제위젯 승인
 app.post("/confirm/widget", function (req, res) {
   const { paymentKey, orderId, amount } = req.body;
 
@@ -50,6 +50,7 @@ app.post("/confirm/widget", function (req, res) {
   });
 });
 
+// 결제창 승인
 app.post("/confirm", function (req, res) {
   const { paymentKey, orderId, amount } = req.body;
 
@@ -83,6 +84,41 @@ app.post("/confirm", function (req, res) {
   });
 });
 
+// 브랜드페이 승인
+app.post("/confirm/brandpay", function (req, res) {
+  const { paymentKey, orderId, amount, customerKey } = req.body;
+
+  // 결제 승인 API를 호출하세요.
+  // 결제를 승인하면 결제수단에서 금액이 차감돼요.
+  // @docs https://docs.tosspayments.com/guides/v2/payment-widget/integration#3-결제-승인하기
+  fetch("https://api.tosspayments.com/v1/brandpay/payments/confirm", {
+    method: "POST",
+    headers: {
+      Authorization: encryptedApiSecretKey,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      orderId: orderId,
+      amount: amount,
+      paymentKey: paymentKey,
+      customerKey: customerKey,
+    }),
+  }).then(async function (response) {
+    const result = await response.json();
+    console.log(result);
+
+    if (!response.ok) {
+      // TODO: 결제 승인 실패 비즈니스 로직을 구현하세요.
+      res.status(response.status).json(result);
+
+      return;
+    }
+
+    // TODO: 결제 완료 비즈니스 로직을 구현하세요.
+    res.status(response.status).json(result);
+  });
+});
+
 // 브랜드페이 Access Token 발급
 app.get("/callback-auth", function (req, res) {
   const { customerKey, code } = req.query;
@@ -92,7 +128,7 @@ app.get("/callback-auth", function (req, res) {
   fetch("https://api.tosspayments.com/v1/brandpay/authorizations/access-token", {
     method: "POST",
     headers: {
-      Authorization: encryptedSecretKey,
+      Authorization: encryptedApiSecretKey,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({

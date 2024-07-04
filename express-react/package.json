@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@tosspayments/tosspayments-sdk": "^2.2.0",
+    "cors": "^2.8.5",
     "express": "^4.19.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

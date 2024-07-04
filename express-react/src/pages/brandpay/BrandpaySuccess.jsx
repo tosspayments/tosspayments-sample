@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
-export function SuccessPage() {
+export function BrandpaySuccessPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [responseData, setResponseData] = useState(null);
@@ -12,9 +12,10 @@ export function SuccessPage() {
         orderId: searchParams.get("orderId"),
         amount: searchParams.get("amount"),
         paymentKey: searchParams.get("paymentKey"),
+        customerKey: searchParams.get("customerKey"),
       };
 
-      const response = await fetch("/api/confirm/widget", {
+      const response = await fetch("/api/confirm/brandpay", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

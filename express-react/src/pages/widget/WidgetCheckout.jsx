@@ -9,12 +9,7 @@ import { useNavigate } from "react-router-dom";
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 const customerKey = generateRandomString();
 
-const amount = {
-  currency: "KRW",
-  value: 50000,
-};
-
-export function CheckoutPage() {
+export function WidgetCheckoutPage() {
   const navigate = useNavigate();
 
   const [amount, setAmount] = useState({
@@ -132,7 +127,7 @@ export function CheckoutPage() {
               await widgets.requestPayment({
                 orderId: generateRandomString(), // 고유 주문 번호
                 orderName: "토스 티셔츠 외 2건",
-                successUrl: window.location.origin + "/success", // 결제 요청이 성공하면 리다이렉트되는 URL
+                successUrl: window.location.origin + "/widget/success", // 결제 요청이 성공하면 리다이렉트되는 URL
                 failUrl: window.location.origin + "/fail", // 결제 요청이 실패하면 리다이렉트되는 URL
                 customerEmail: "customer123@gmail.com",
                 customerName: "김토스",
