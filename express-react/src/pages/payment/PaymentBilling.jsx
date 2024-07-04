@@ -9,6 +9,7 @@ export function PaymentBillingPage() {
 
   useEffect(() => {
     // 서버로 빌링키 발급을 위해 authKey 를 보내세요.
+    // @docs https://docs.tosspayments.com/reference#authkey로-카드-빌링키-발급
     async function issueBillingKey() {
       const requestData = {
         customerKey: searchParams.get("customerKey"),
@@ -86,15 +87,8 @@ export function PaymentBillingPage() {
   return (
     <div className="wrapper">
       <div className="box_section" style={{ width: "600px" }}>
-        <img
-          width="100px"
-          src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png"
-        />
-        <h2 id="title">
-          {billingConfirmed
-            ? "빌링키로 결제에 성공했어요"
-            : "빌링키 발급을 완료했어요"}
-        </h2>
+        <img width="100px" src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png" />
+        <h2 id="title">{billingConfirmed ? "빌링키로 결제에 성공했어요" : "빌링키 발급을 완료했어요"}</h2>
 
         {billingConfirmed === false ? (
           <button id="confirm" className="button" onClick={confirm}>
@@ -106,9 +100,9 @@ export function PaymentBillingPage() {
           <button
             className="button p-grid-col5"
             onClick={() => {
-              location.href =
-                "https://docs.tosspayments.com/guides/payment/integration";
-            }}>
+              location.href = "https://docs.tosspayments.com/guides/v2/billing/integration";
+            }}
+          >
             연동 문서
           </button>
           <button
@@ -116,13 +110,12 @@ export function PaymentBillingPage() {
             onClick={() => {
               location.href = "https://discord.gg/A4fRFXQhRu";
             }}
-            style={{ backgroundColor: "#e8f3ff", color: "#1b64da" }}>
+            style={{ backgroundColor: "#e8f3ff", color: "#1b64da" }}
+          >
             실시간 문의
           </button>
         </div>
-        <div
-          className="box_section"
-          style={{ width: "600px", textAlign: "left" }}>
+        <div className="box_section" style={{ width: "600px", textAlign: "left" }}>
           <b>Response Data :</b>
           <div id="response" style={{ whiteSpace: "initial" }}>
             {responseData && <pre>{JSON.stringify(responseData, null, 4)}</pre>}

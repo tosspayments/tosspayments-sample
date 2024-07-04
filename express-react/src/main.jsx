@@ -2,16 +2,35 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import { BrandpayCheckoutPage } from "./pages/brandpay/BrandpayCheckout";
-import { CheckoutPage } from "./pages/Checkout";
 import { FailPage } from "./pages/Fail";
 import { PaymentBillingPage } from "./pages/payment/PaymentBilling";
 import { PaymentCheckoutPage } from "./pages/payment/PaymentCheckout";
-import { SuccessPage } from "./pages/Success";
+import { PaymentSuccessPage } from "./pages/payment/PaymentSuccess";
+import { BrandpaySuccessPage } from "./pages/brandpay/BrandpaySuccess";
+import { WidgetCheckoutPage } from "./pages/widget/WidgetCheckout";
+import { WidgetSuccessPage } from "./pages/widget/WidgetSuccess";
 
 const router = createBrowserRouter([
   {
+    path: "/",
+    element: <WidgetCheckoutPage />,
+  },
+  {
+    path: "widget",
+    children: [
+      {
+        path: "checkout",
+        element: <WidgetCheckoutPage />,
+      },
+      {
+        path: "success",
+        element: <WidgetSuccessPage />,
+      },
+    ],
+  },
+  {
     path: "checkout",
-    element: <CheckoutPage />,
+    element: <WidgetCheckoutPage />,
   },
   {
     path: "brandpay",
@@ -19,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: "checkout",
         element: <BrandpayCheckoutPage />,
+      },
+      {
+        path: "success",
+        element: <BrandpaySuccessPage />,
       },
     ],
   },
@@ -33,11 +56,11 @@ const router = createBrowserRouter([
         path: "billing",
         element: <PaymentBillingPage />,
       },
+      {
+        path: "success",
+        element: <PaymentSuccessPage />,
+      },
     ],
-  },
-  {
-    path: "success",
-    element: <SuccessPage />,
   },
   {
     path: "fail",
@@ -45,6 +68,4 @@ const router = createBrowserRouter([
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <RouterProvider router={router} />
-);
+ReactDOM.createRoot(document.getElementById("root")).render(<RouterProvider router={router} />);
