@@ -12,6 +12,10 @@ import { WidgetSuccessPage } from "./pages/widget/WidgetSuccess";
 
 const router = createBrowserRouter([
   {
+    path: "/",
+    element: <WidgetCheckoutPage />,
+  },
+  {
     path: "widget",
     children: [
       {

@@ -22,7 +22,7 @@ export function BrandpayCheckoutPage() {
         const brandpay = tossPayments.brandpay({
           customerKey,
           // TODO: 개발자센터의 브랜드페이 > Redirect URL 에 아래 URL 을 추가하세요.
-          redirectUrl: window.location.origin + "/api/callback-auth",
+          redirectUrl: "http://localhost:3000/api/callback-auth",
         });
 
         setBrandpay(brandpay);

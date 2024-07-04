@@ -27,7 +27,13 @@ $ v18.18.2
    $ npm start # 서버 실행
    ```
 
-3. http://localhost:4000/checkout.html 에서 샘플 프로젝트를 확인하세요.
+3. 로컬 환경에서 샘플 프로젝트를 확인하세요.
+
+| 제품                      | 링크                                         |
+| ------------------------- | -------------------------------------------- |
+| 결제위젯                  | http://localhost:4000/widget/checkout.html   |
+| 결제창(일반결제/정기결제) | http://localhost:4000/payment/checkout.html  |
+| 브랜드페이                | http://localhost:4000/brandpay/checkout.html |
 
 ## 인증하기
 
@@ -36,7 +42,7 @@ $ v18.18.2
 - **클라이언트 키**
 
   - **결제위젯**: `public/checkout.html` 파일에 있는 `clientKey`를 내 결제위젯 연동 클라이언트 키로 수정하세요.
-  - **결제창 및 브랜드페이**: `public/payment/checkout.html`, `public/brandpay/clientKey` 파일에 있는 `clientKey`를 내 API 개별 연동 클라이언트 키로 수정하세요.
+  - **결제창 및 브랜드페이**: `public/payment/checkout.html`, `public/brandpay/checkout.html` 파일에 있는 `clientKey`를 내 API 개별 연동 클라이언트 키로 수정하세요.
 
 - **시크릿 키**
 
@@ -44,6 +50,11 @@ $ v18.18.2
   - **결제창 및 브랜드페이**: `server.js` 파일에 있는 `apiSecretKey`를 내 API 개별 연동 시크릿 키로 수정하세요.
 
   \* 시크릿 키는 외부에 절대 노출되면 안 됩니다.
+
+- **브랜드페이**
+
+  - 브랜드페이를 테스트하고 싶다면 반드시 클라이언트 키, 시크릿 키를 내 키로 바꿔주세요.
+  - 개발자센터의 브랜드페이 메뉴에서 리다이렉트 URL도 반드시 등록해야 됩니다. `public/brandpay/checkout.html` 파일을 참고해주세요.
 
 ## 더 알아보기
 
