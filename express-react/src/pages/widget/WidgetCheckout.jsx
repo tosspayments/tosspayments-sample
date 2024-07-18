@@ -53,22 +53,23 @@ export function WidgetCheckoutPage() {
       // @docs https://docs.tosspayments.com/sdk/v2/js#widgetssetamount
       await widgets.setAmount(amount);
 
-      // ------  결제 UI 렌더링 ------
-      // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderpaymentmethods
-      await widgets.renderPaymentMethods({
-        selector: "#payment-method",
-        // 렌더링하고 싶은 결제 UI의 variantKey
-        // 결제 수단 및 스타일이 다른 멀티 UI를 직접 만들고 싶다면 계약이 필요해요.
-        // @docs https://docs.tosspayments.com/guides/v2/payment-widget/admin#새로운-결제-ui-추가하기
-        variantKey: "DEFAULT",
-      });
-
-      // ------  이용약관 UI 렌더링 ------
-      // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderagreement
-      await widgets.renderAgreement({
-        selector: "#agreement",
-        variantKey: "AGREEMENT",
-      });
+      await Promise.all([
+        // ------  결제 UI 렌더링 ------
+        // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderpaymentmethods
+        widgets.renderPaymentMethods({
+          selector: "#payment-method",
+          // 렌더링하고 싶은 결제 UI의 variantKey
+          // 결제 수단 및 스타일이 다른 멀티 UI를 직접 만들고 싶다면 계약이 필요해요.
+          // @docs https://docs.tosspayments.com/guides/v2/payment-widget/admin#새로운-결제-ui-추가하기
+          variantKey: "DEFAULT",
+        }),
+        // ------  이용약관 UI 렌더링 ------
+        // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderagreement
+        widgets.renderAgreement({
+          selector: "#agreement",
+          variantKey: "AGREEMENT",
+        }),
+      ]);
 
       setReady(true);
     }
@@ -86,7 +87,9 @@ export function WidgetCheckoutPage() {
         {/* 쿠폰 체크박스 */}
         <div style={{ paddingLeft: "24px" }}>
           <div className="checkable typography--p">
-            <label htmlFor="coupon-box" className="checkable__label typography--regular">
+            <label
+              htmlFor="coupon-box"
+              className="checkable__label typography--regular">
               <input
                 id="coupon-box"
                 className="checkable__input"
@@ -137,8 +140,7 @@ export function WidgetCheckoutPage() {
               // 에러 처리하기
               console.error(error);
             }
-          }}
-        >
+          }}>
           결제하기
         </button>
       </div>
@@ -148,15 +150,13 @@ export function WidgetCheckoutPage() {
           padding: "40px 30px 50px 30px",
           marginTop: "30px",
           marginBottom: "50px",
-        }}
-      >
+        }}>
         <button
           className="button"
           style={{ marginTop: "30px" }}
           onClick={() => {
             navigate("/brandpay/checkout");
-          }}
-        >
+          }}>
           위젯 없이 브랜드페이만 연동하기
         </button>
         <button
@@ -164,8 +164,7 @@ export function WidgetCheckoutPage() {
           style={{ marginTop: "30px" }}
           onClick={() => {
             navigate("/payment/checkout");
-          }}
-        >
+          }}>
           위젯 없이 결제창만 연동하기
         </button>
       </div>
