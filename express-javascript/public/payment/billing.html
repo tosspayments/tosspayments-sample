@@ -12,7 +12,7 @@
   <body>
     <div class="box_section" style="width: 600px">
       <img width="100px" src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png" />
-      <h2 id="title">빌링키 발급을 완료어요</h2>
+      <h2 id="title">빌링키 발급을 완료하세요</h2>
 
       <button id="confirm" class="button" onclick="confirm()">빌링키로 자동결제 실행하기</button>
 
@@ -70,7 +70,7 @@
       async function confirm() {
         async function confirmBilling() {
           const requestData = {
-            customerKey: urlParams.get("customerKey"),
+            customerKey: urlParams.get("customerKeya"),
             amount: 4900,
             orderId: generateRandomString(),
             orderName: "토스 프라임 구독",
