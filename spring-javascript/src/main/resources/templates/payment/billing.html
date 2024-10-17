@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>토스페이먼츠 샘플 프로젝트</title>
+</head>
+
+<body>
+<div class="box_section" style="width: 600px">
+    <img width="100px" src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png" />
+    <h2 id="title">빌링키 발급을 완료했어요</h2>
+
+    <button id="confirm" class="button" onclick="confirm()">빌링키로 자동결제 실행하기</button>
+
+    <div class="p-grid" style="margin-top: 30px">
+        <button class="button p-grid-col5" onclick="location.href='https://docs.tosspayments.com/guides/v2/billing/integration';">연동 문서</button>
+        <button class="button p-grid-col5" onclick="location.href='https://discord.gg/A4fRFXQhRu';" style="background-color: #e8f3ff; color: #1b64da">실시간 문의</button>
+    </div>
+</div>
+
+<div class="box_section" style="width: 600px; text-align: left">
+    <b>Response Data :</b>
+    <div id="response" style="white-space: initial"></div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // 서버로 빌링키 발급을 위해 authKey 를 보내세요.
+    // @docs https://docs.tosspayments.com/reference#authkey로-카드-빌링키-발급
+    async function issueBillingKey() {
+      var requestData = {
+        customerKey: urlParams.get("customerKey"),
+        authKey: urlParams.get("authKey"),
+      };
+
+      const response = await fetch("/issue-billing-key", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        throw { message: json.message, code: json.code };
+      }
+
+      return json;
+    }
+
+    issueBillingKey()
+      .then(function (data) {
+        // TODO: 빌링키 발급에 성공했을 경우 UI 처리 로직을 구현하세요.
+        document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+      })
+      .catch((err) => {
+        // TODO: 빌링키 발급에 실패했을 경우 UI 처리 로직을 구현하세요.
+        window.location.href = `/fail.html?message=${err.message}&code=${err.code}`;
+      });
+
+    // 일반적으로 정기결제는 특정 시점에 배치를 통해 구현하지만,
+    // 이해를 돕기 위해 클라이언트에서 강제로 실행해볼 수 있도록 샘플 API 가 구현되어 있습니다.
+    async function confirm() {
+      async function confirmBilling() {
+        const requestData = {
+          customerKey: urlParams.get("customerKey"),
+          amount: 4900,
+          orderId: generateRandomString(),
+          orderName: "토스 프라임 구독",
+          customerEmail: "customer123@gmail.com",
+          customerName: "김토스",
+        };
+
+        const response = await fetch("/confirm-billing", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        });
+
+        const json = await response.json();
+
+        if (!response.ok) {
+          throw { message: json.message, code: json.code };
+        }
+
+        return json;
+      }
+
+      confirmBilling()
+        .then(function (data) {
+          document.getElementById("title").innerText = "빌링키로 결제에 성공했어요.";
+          document.getElementById("confirm").remove();
+          document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+        })
+        .catch((err) => {
+          window.location.href = `/fail.html?message=${err.message}&code=${err.code}`;
+        });
+    }
+
+    function generateRandomString() {
+      return window.btoa(Math.random()).slice(0, 20);
+    }
+</script>
+</body>
+</html>
