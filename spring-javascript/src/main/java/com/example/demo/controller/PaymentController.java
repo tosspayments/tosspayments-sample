@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -54,6 +55,29 @@ public class PaymentController {
             billingKeyMap.put((String) requestData.get("customerKey"), (String) response.get("billingKey"));
         }
 
+        return ResponseEntity.status(response.containsKey("error") ? 400 : 200).body(response);
+    }
+
+    @RequestMapping(value = "/callback-auth", method = RequestMethod.GET)
+    public ResponseEntity<JSONObject> callbackAuth(@RequestParam String customerKey, @RequestParam String code) throws Exception {
+        JSONObject requestData = new JSONObject();
+        requestData.put("grantType", "AuthorizationCode");
+        requestData.put("customerKey", customerKey);
+        requestData.put("code", code);
+        
+        String url = "https://api.tosspayments.com/v1/brandpay/authorizations/access-token";
+        JSONObject response = sendRequest(requestData, API_SECRET_KEY, url);
+
+        logger.info("Response Data: {}", response);
+
+        return ResponseEntity.status(response.containsKey("error") ? 400 : 200).body(response);
+    }
+
+    @RequestMapping(value = "/confirm/brandpay", method = RequestMethod.POST, consumes = "application/json")
+    public ResponseEntity<JSONObject> confirmBrandpay(@RequestBody String jsonBody) throws Exception {
+        JSONObject requestData = parseRequestData(jsonBody);
+        String url = "https://api.tosspayments.com/v1/brandpay/payments/confirm";
+        JSONObject response = sendRequest(requestData, API_SECRET_KEY, url);
         return ResponseEntity.status(response.containsKey("error") ? 400 : 200).body(response);
     }
 
