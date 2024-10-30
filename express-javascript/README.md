@@ -41,7 +41,7 @@ $ v18.18.2
 
 - **클라이언트 키**
 
-  - **결제위젯**: `public/checkout.html` 파일에 있는 `clientKey`를 내 결제위젯 연동 클라이언트 키로 수정하세요.
+  - **결제위젯**: `public/widget/checkout.html` 파일에 있는 `clientKey`를 내 결제위젯 연동 클라이언트 키로 수정하세요.
   - **결제창 및 브랜드페이**: `public/payment/checkout.html`, `public/brandpay/checkout.html` 파일에 있는 `clientKey`를 내 API 개별 연동 클라이언트 키로 수정하세요.
 
 - **시크릿 키**
