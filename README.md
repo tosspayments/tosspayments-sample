@@ -8,6 +8,7 @@
 - [Express + JavaScript](https://github.com/tosspayments/tosspayments-sample/tree/main/express-javascript)
 - [PHP + JavaScript](https://github.com/tosspayments/tosspayments-sample/tree/main/php-javascript)
 - [Spring + JavaScript](https://github.com/tosspayments/tosspayments-sample/tree/main/spring-javascript)
+- [Django + JavaScript](https://github.com/tosspayments/tosspayments-sample/tree/main/django-javascript)
  
 ## 더 알아보기
 
