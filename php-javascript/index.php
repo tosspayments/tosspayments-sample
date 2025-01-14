@@ -74,6 +74,14 @@ function confirmPayment($authKey) {
 
     $response = sendRequest("https://api.tosspayments.com/v1/payments/confirm", $authKey, $postData);
     echo $response;
+
+    // 응답 데이터를 JSON 형식으로 파싱
+    $responseData = json_decode($response, true);
+
+    // 주요 파라미터 추출
+    $orderId = $responseData['orderId'] ?? null;
+    $status = $responseData['status'] ?? null;
+    $receiptUrl = $responseData['receipt']['url'] ?? null;
 }
 
 function confirmBrandPay($authKey) {
@@ -88,6 +96,14 @@ function confirmBrandPay($authKey) {
 
     $response = sendRequest("https://api.tosspayments.com/v1/brandpay/payments/confirm", $authKey, $postData);
     echo $response;
+    
+    // 응답 데이터를 JSON 형식으로 파싱
+    $responseData = json_decode($response, true);
+
+    // 주요 파라미터 추출
+    $orderId = $responseData['orderId'] ?? null;
+    $status = $responseData['status'] ?? null;
+    $receiptUrl = $responseData['receipt']['url'] ?? null;
 }
 
 function getAuthToken($authKey) {
