@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "TossPayments Express + React Sample",
   "scripts": {
-    "start": "concurrently \"vite\"",
-    "dev": "concurrently \"vite\" \"nodemon server.js\"",
+    "start": "concurrently \"vite\" \"go install github.com/air-verse/air@latest\" \"cd ../backend && air\"",
+    "dev": "concurrently \"vite\"",
     "build": "vite build"
   },
   "dependencies": {
