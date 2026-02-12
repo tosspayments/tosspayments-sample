@@ -10,8 +10,8 @@
 
 | 제품                      | 링크                                               |
 | ------------------------- | -------------------------------------------------- |
-| 결제위젯                  | http://localhost:4000/public/widget/checkout.html  |
-| 결제창(일반결제/정기결제) | http://localhost:4000/public/payment/checkout.html |
+| 결제위젯                  | http://localhost:4000/widget/checkout.html  |
+| 결제창(일반결제/정기결제) | http://localhost:4000/payment/checkout.html |
 
 ## 인증하기
 
