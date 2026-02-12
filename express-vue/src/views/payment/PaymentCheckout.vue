@@ -64,8 +64,26 @@
 
     <div class="box_section">
       <h1>정기 결제</h1>
+      <div id="billing-method" style="display: flex">
+        <button
+          id="BILLING_CARD"
+          v-bind:class="{ active: selectedBillingMethod === 'CARD' }"
+          class="button2"
+          @click="selectedBillingMethod = 'CARD'"
+        >
+          카드 자동결제
+        </button>
+        <button
+          id="BILLING_TRANSFER"
+          v-bind:class="{ active: selectedBillingMethod === 'TRANSFER' }"
+          class="button2"
+          @click="selectedBillingMethod = 'TRANSFER'"
+        >
+          계좌 자동결제
+        </button>
+      </div>
       <button class="button" @click="requestBillingAuth">
-        빌링키 발급하기
+        자동결제 수단 등록하기
       </button>
     </div>
   </div>
@@ -94,6 +112,7 @@ export default {
     return {
       payment: null,
       selectedPaymentMethod: null,
+      selectedBillingMethod: "CARD",
     };
   },
   methods: {
@@ -239,9 +258,9 @@ export default {
     },
     async requestBillingAuth() {
       await this.payment.requestBillingAuth({
-        method: "CARD", // 자동결제(빌링)은 카드만 지원합니다
-        successUrl: window.location.origin + "/payment/billing", // 요청이 성공하면 리다이렉트되는 URL
-        failUrl: window.location.origin + "/fail", // 요청이 실패하면 리다이렉트되는 URL
+        method: this.selectedBillingMethod,
+        successUrl: window.location.origin + `/payment/billing?billingMethod=${this.selectedBillingMethod}&`,
+        failUrl: window.location.origin + "/fail",
         customerEmail: "customer123@gmail.com",
         customerName: "김토스",
       });

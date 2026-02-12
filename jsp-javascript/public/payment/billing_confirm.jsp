@@ -17,6 +17,11 @@
     // 결제 승인 API 호출하기
     String customerKey = request.getParameter("customerKey");
     String authKey = request.getParameter("authKey");
+    String billingMethod = request.getParameter("billingMethod");
+    if (billingMethod == null || billingMethod.isEmpty()) {
+        billingMethod = "CARD";
+    }
+    String billingMethodLabel = "CARD".equals(billingMethod) ? "카드 자동결제" : "계좌 자동결제";
     String secretKey = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R:";
 
     Encoder encoder = Base64.getEncoder();
@@ -61,20 +66,21 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <title>결제 성공</title>
+    <title>자동결제 수단 등록</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 </head>
 <body>
     <section>
         <% if (isSuccess) { %>
-            <h1>결제 성공</h1>
+            <h1><%= billingMethodLabel %> 등록 성공</h1>
             <p>결과 데이터 : <%= jsonObject.toJSONString() %></p>
+            <p>method : <%= jsonObject.get("method") %></p>
             <p>billingKey : <%= jsonObject.get("billingKey") %></p>
-            <p>cardCompany : <%= jsonObject.get("cardCompany") %></p>
-            <p>cardNumber : <%= jsonObject.get("cardNumber") %></p>
+            <p>card : <%= jsonObject.get("card") %></p>
+            <p>transfers : <%= jsonObject.get("transfers") %></p>
         <% } else { %>
-            <h1>결제 실패</h1>
+            <h1>자동결제 수단 등록 실패</h1>
             <p><%= jsonObject.get("message") %></p>
             <span>에러코드: <%= jsonObject.get("code") %></span>
         <% } %>

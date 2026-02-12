@@ -88,8 +88,8 @@ def fail(request):
     })
 
 # 빌링키 발급
-# AuthKey 로 카드 빌링키 발급 API 를 호출하세요
-# @docs https://docs.tosspayments.com/reference#authkey로-카드-빌링키-발급
+# AuthKey 로 빌링키 발급 API 를 호출하세요
+# @docs https://docs.tosspayments.com/guides/v2/billing/integration
 @csrf_exempt
 def issueBillingKey(request):
     try:
@@ -132,7 +132,7 @@ def confirm_billing(request):
         if not all([customerKey, amount, orderId, orderName, customerEmail, customerName]):
             raise ValueError("Missing parameters")
 
-        # 저장해두었던 빌링키로 카드 자동결제 승인 API 를 호출하세요.
+        # 저장해두었던 빌링키로 자동결제 승인 API 를 호출하세요.
         billingKey = billing_key_map.get(customerKey)
         if not billingKey:
             return JsonResponse({'error': 'Billing key not found'}, status=400)
