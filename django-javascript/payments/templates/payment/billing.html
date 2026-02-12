@@ -14,9 +14,9 @@
   <body>
     <div class="box_section" style="width: 600px">
       <img width="100px" src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png" />
-      <h2 id="title">빌링키 발급을 완료했어요</h2>
+      <h2 id="title">자동결제 수단 등록을 완료했어요</h2>
 
-      <button id="confirm" class="button" onclick="confirm()">빌링키로 자동결제 실행하기</button>
+      <button id="confirm" class="button" onclick="confirm()">등록된 빌링키로 자동결제 실행하기</button>
 
       <div class="p-grid" style="margin-top: 30px">
         <button class="button p-grid-col5" onclick="location.href='https://docs.tosspayments.com/guides/v2/billing/integration';">연동 문서</button>
@@ -31,9 +31,12 @@
 
     <script>
       const urlParams = new URLSearchParams(window.location.search);
+      const billingMethod = urlParams.get("billingMethod") || "CARD";
+      const billingMethodLabel = billingMethod === "TRANSFER" ? "계좌 자동결제" : "카드 자동결제";
+      document.getElementById("title").innerText = `${billingMethodLabel} 등록을 완료했어요`;
 
       // 서버로 빌링키 발급을 위해 authKey 를 보내세요.
-      // @docs https://docs.tosspayments.com/reference#authkey로-카드-빌링키-발급
+      // @docs https://docs.tosspayments.com/guides/v2/billing/integration
       async function issueBillingKey() {
         var requestData = {
           customerKey: urlParams.get("customerKey"),
@@ -60,7 +63,7 @@
       issueBillingKey()
         .then(function (data) {
           // TODO: 빌링키 발급에 성공했을 경우 UI 처리 로직을 구현하세요.
-          document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+          renderResponse(data);
         })
         .catch((err) => {
           // TODO: 빌링키 발급에 실패했을 경우 UI 처리 로직을 구현하세요.
@@ -99,9 +102,9 @@
 
         confirmBilling()
           .then(function (data) {
-            document.getElementById("title").innerText = "빌링키로 결제에 성공했어요.";
+            document.getElementById("title").innerText = `${billingMethodLabel} 자동결제 승인에 성공했어요.`;
             document.getElementById("confirm").remove();
-            document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+            renderResponse(data);
           })
           .catch((err) => {
             window.location.href = `/fail?message=${err.message}&code=${err.code}`;
@@ -110,6 +113,20 @@
 
       function generateRandomString() {
         return window.btoa(Math.random()).slice(0, 20);
+      }
+
+      function renderResponse(data) {
+        const method = data.method || "-";
+        const card = data.card ? JSON.stringify(data.card, null, 2) : "-";
+        const transfers = data.transfers || data.transfer;
+        const transfer = transfers ? JSON.stringify(transfers, null, 2) : "-";
+
+        document.getElementById("response").innerHTML = `
+          <div><b>method:</b> ${method}</div>
+          <div><b>card:</b> <pre>${card}</pre></div>
+          <div><b>transfers:</b> <pre>${transfer}</pre></div>
+          <pre>${JSON.stringify(data, null, 4)}</pre>
+        `;
       }
     </script>
   </body>

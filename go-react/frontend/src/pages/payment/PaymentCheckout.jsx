@@ -18,7 +18,6 @@ export function PaymentCheckoutPage() {
   const [payment, setPayment] = useState(null);
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
-  const [selectedBillingMethod, setSelectedBillingMethod] = useState("CARD");
 
   function selectPaymentMethod(method) {
     setSelectedPaymentMethod(method);
@@ -161,9 +160,9 @@ export function PaymentCheckoutPage() {
 
   async function requestBillingAuth() {
     await payment.requestBillingAuth({
-      method: selectedBillingMethod,
-      successUrl: window.location.origin + `/payment/billing?billingMethod=${selectedBillingMethod}&`,
-      failUrl: window.location.origin + "/fail",
+      method: "CARD", // 자동결제(빌링)은 카드만 지원합니다
+      successUrl: window.location.origin + "/payment/billing", // 요청이 성공하면 리다이렉트되는 URL
+      failUrl: window.location.origin + "/fail", // 요청이 실패하면 리다이렉트되는 URL
       customerEmail: "customer123@gmail.com",
       customerName: "김토스",
     });
@@ -203,16 +202,8 @@ export function PaymentCheckoutPage() {
       </div>
       <div className="box_section">
         <h1>정기 결제</h1>
-        <div id="billing-method" style={{ display: "flex" }}>
-          <button id="BILLING_CARD" className={`button2 ${selectedBillingMethod === "CARD" ? "active" : ""}`} onClick={() => setSelectedBillingMethod("CARD")}>
-            카드 자동결제
-          </button>
-          <button id="BILLING_TRANSFER" className={`button2 ${selectedBillingMethod === "TRANSFER" ? "active" : ""}`} onClick={() => setSelectedBillingMethod("TRANSFER")}>
-            계좌 자동결제
-          </button>
-        </div>
         <button className="button" onClick={() => requestBillingAuth()}>
-          자동결제 수단 등록하기
+          빌링키 발급하기
         </button>
       </div>
     </div>

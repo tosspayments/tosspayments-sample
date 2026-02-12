@@ -6,12 +6,10 @@ export function PaymentBillingPage() {
   const [searchParams] = useSearchParams();
   const [responseData, setResponseData] = useState(null);
   const [billingConfirmed, setBillingConfirmed] = useState(false);
-  const billingMethod = searchParams.get("billingMethod") || "CARD";
-  const billingMethodLabel = billingMethod === "TRANSFER" ? "계좌 자동결제" : "카드 자동결제";
 
   useEffect(() => {
     // 서버로 빌링키 발급을 위해 authKey 를 보내세요.
-    // @docs https://docs.tosspayments.com/guides/v2/billing/integration
+    // @docs https://docs.tosspayments.com/reference#authkey로-카드-빌링키-발급
     async function issueBillingKey() {
       const requestData = {
         customerKey: searchParams.get("customerKey"),
@@ -90,11 +88,11 @@ export function PaymentBillingPage() {
     <div className="wrapper">
       <div className="box_section" style={{ width: "600px" }}>
         <img width="100px" src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png" />
-        <h2 id="title">{billingConfirmed ? `${billingMethodLabel} 자동결제 승인에 성공했어요` : `${billingMethodLabel} 등록을 완료했어요`}</h2>
+        <h2 id="title">{billingConfirmed ? "빌링키로 결제에 성공했어요" : "빌링키 발급을 완료했어요"}</h2>
 
         {billingConfirmed === false ? (
           <button id="confirm" className="button" onClick={confirm}>
-            등록된 빌링키로 자동결제 실행하기
+            강제로 정기결제 실행시키기
           </button>
         ) : null}
 
@@ -120,22 +118,7 @@ export function PaymentBillingPage() {
         <div className="box_section" style={{ width: "600px", textAlign: "left" }}>
           <b>Response Data :</b>
           <div id="response" style={{ whiteSpace: "initial" }}>
-            {responseData && (
-              <>
-                <div>
-                  <b>method:</b> {responseData.method || "-"}
-                </div>
-                <div>
-                  <b>card:</b>
-                  <pre>{responseData.card ? JSON.stringify(responseData.card, null, 2) : "-"}</pre>
-                </div>
-                <div>
-                  <b>transfers:</b>
-                  <pre>{responseData.transfers || responseData.transfer ? JSON.stringify(responseData.transfers || responseData.transfer, null, 2) : "-"}</pre>
-                </div>
-                <pre>{JSON.stringify(responseData, null, 4)}</pre>
-              </>
-            )}
+            {responseData && <pre>{JSON.stringify(responseData, null, 4)}</pre>}
           </div>
         </div>
       </div>

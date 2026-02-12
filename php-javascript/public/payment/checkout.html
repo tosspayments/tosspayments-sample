@@ -30,8 +30,11 @@
       </div>
       <div class="box_section" style="padding: 40px 30px 50px 30px; margin-top: 30px; margin-bottom: 50px">
         <h1>정기 결제</h1>
-        <!-- 빌링 버튼 -->
-        <button class="button" style="margin-top: 30px" onclick="requestBillingAuth()">빌링키 발급하기</button>
+        <div id="billing-method" style="display: flex">
+          <button id="BILLING_CARD" class="button2" onclick="selectBillingMethod('CARD')">카드 자동결제</button>
+          <button id="BILLING_TRANSFER" class="button2" onclick="selectBillingMethod('TRANSFER')">계좌 자동결제</button>
+        </div>
+        <button class="button" style="margin-top: 30px" onclick="requestBillingAuth()">자동결제 수단 등록하기</button>
       </div>
     </div>
     <script>
@@ -41,6 +44,7 @@
       };
 
       let selectedPaymentMethod = null;
+      let selectedBillingMethod = "CARD";
 
       function selectPaymentMethod(method) {
         if (selectedPaymentMethod != null) {
@@ -51,6 +55,24 @@
 
         document.getElementById(selectedPaymentMethod).style.backgroundColor = "rgb(229 239 255)";
       }
+
+      function selectBillingMethod(method) {
+        if (selectedBillingMethod === "CARD") {
+          document.getElementById("BILLING_CARD").style.backgroundColor = "#ffffff";
+        } else {
+          document.getElementById("BILLING_TRANSFER").style.backgroundColor = "#ffffff";
+        }
+
+        selectedBillingMethod = method;
+
+        if (selectedBillingMethod === "CARD") {
+          document.getElementById("BILLING_CARD").style.backgroundColor = "rgb(229 239 255)";
+        } else {
+          document.getElementById("BILLING_TRANSFER").style.backgroundColor = "rgb(229 239 255)";
+        }
+      }
+
+      selectBillingMethod(selectedBillingMethod);
 
       // ------  SDK 초기화 ------
       // TODO: clientKey는 개발자센터의 API 개별 연동 키 > 결제창 연동에 사용하려할 MID > 클라이언트 키로 바꾸세요.
@@ -183,10 +205,10 @@
 
       async function requestBillingAuth() {
         await payment.requestBillingAuth({
-          method: "CARD", // 자동결제(빌링)은 카드만 지원합니다
-          successUrl: window.location.origin + "/public/payment/billing.html", // 요청이 성공하면 리다이렉트되는 URL
+          method: selectedBillingMethod,
+          successUrl: window.location.origin + `/public/payment/billing.html?billingMethod=${selectedBillingMethod}&`,
           failUrl: window.location.origin + "/public/fail.html",
-          customerEmail: "customer123@gmail.com", // 요청이 실패하면 리다이렉트되는 URL
+          customerEmail: "customer123@gmail.com",
           customerName: "김토스",
         });
       }
