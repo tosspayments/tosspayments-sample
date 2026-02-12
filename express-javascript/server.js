@@ -158,8 +158,8 @@ const billingKeyMap = new Map();
 app.post("/issue-billing-key", function (req, res) {
   const { customerKey, authKey } = req.body;
 
-  // AuthKey 로 카드 빌링키 발급 API 를 호출하세요
-  // @docs https://docs.tosspayments.com/reference#authkey로-카드-빌링키-발급
+  // AuthKey 로 빌링키 발급 API 를 호출하세요
+  // @docs https://docs.tosspayments.com/guides/v2/billing/integration
   fetch(`https://api.tosspayments.com/v1/billing/authorizations/issue`, {
     method: "POST",
     headers: {
@@ -182,17 +182,17 @@ app.post("/issue-billing-key", function (req, res) {
     }
 
     // TODO: 빌링키 발급 성공 비즈니스 로직을 구현하세요.
-    // TODO: 발급된 빌링키를 구매자 정보로 찾을 수 있도록 저장해두고, 결제가 필요한 시점에 조회하여 카드 자동결제 승인 API 를 호출합니다.
+    // TODO: 발급된 빌링키를 구매자 정보로 찾을 수 있도록 저장해두고, 결제가 필요한 시점에 조회하여 자동결제 승인 API 를 호출합니다.
     billingKeyMap.set(customerKey, result.billingKey);
     res.status(response.status).json(result);
   });
 });
 
-// 카드 자동결제 승인
+// 자동결제 승인
 app.post("/confirm-billing", function (req, res) {
   const { customerKey, amount, orderId, orderName, customerEmail, customerName } = req.body;
 
-  // 저장해두었던 빌링키로 카드 자동결제 승인 API 를 호출하세요.
+  // 저장해두었던 빌링키로 자동결제 승인 API 를 호출하세요.
   fetch(`https://api.tosspayments.com/v1/billing/${billingKeyMap.get(customerKey)}`, {
     method: "POST",
     headers: {
