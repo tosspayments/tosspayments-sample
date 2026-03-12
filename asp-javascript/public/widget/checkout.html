@@ -1,11 +1,9 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
-    <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="../payment/style.css" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>토스페이먼츠 샘플 프로젝트</title>
@@ -33,8 +31,7 @@
           <!-- 쿠폰 체크박스 -->
           <div class="checkable typography--p">
             <label for="coupon-box" class="checkable__label typography--regular"
-              ><input id="coupon-box" class="checkable__input" type="checkbox" aria-checked="true" /><span class="checkable__label-text">5,000원 쿠폰 적용</span></label
-            >
+              ><input id="coupon-box" class="checkable__input" type="checkbox" aria-checked="true" /><span class="checkable__label-text">5,000원 쿠폰 적용</span></label>
           </div>
           <!-- [주문서형] 결제하기 버튼 -->
           <button class="button button--block" id="payment-button">결제하기</button>
@@ -61,8 +58,6 @@
         <span>위젯 없이 직접 연동하기</span>
       </div>
       <div class="checkout-nav">
-        <!-- 브랜드페이만 연동하기 -->
-        <button class="button button--nav" id="brandpay-button">위젯 없이 브랜드페이만 연동하기</button>
         <!-- 결제창만 연동하기 -->
         <button class="button button--nav" id="payment-window-button">위젯 없이 결제창만 연동하기</button>
       </div>
@@ -71,6 +66,8 @@
       main();
 
       async function main() {
+        let currentURL = window.location.href.replace(/[^/]*$/, "");
+
         const amount = {
           currency: "KRW",
           value: 50000,
@@ -92,18 +89,22 @@
         // setAmount는 renderPaymentMethods, renderAgreement, requestPayment 보다 반드시 먼저 호출해야 합니다.
         await widgets.setAmount(amount);
 
+        // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderpaymentmethods
+        // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderagreement
         await Promise.all([
           widgets.renderPaymentMethods({ selector: "#payment-method", variantKey: "DEFAULT" }),
           widgets.renderAgreement({ selector: "#agreement", variantKey: "AGREEMENT" }),
         ]);
 
+        // ------ '결제하기' 버튼 누르면 결제 요청하기 ------
+        // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrequestpayment
         document.getElementById("payment-button").addEventListener("click", async function () {
           // 결제 요청 전 orderId, amount를 서버에 저장하세요. (결제 금액 위변조 검증용)
           await widgets.requestPayment({
             orderId: generateRandomString(),
             orderName: "토스 티셔츠 외 2건",
-            successUrl: window.location.origin + "/widget/success",
-            failUrl: window.location.origin + "/fail",
+            successUrl: currentURL + "success.asp",
+            failUrl: window.location.origin + "/public/payment/fail.asp",
             customerEmail: "customer123@gmail.com",
             customerName: "김토스",
             // customerMobilePhone: "01012341234",
@@ -125,32 +126,33 @@
         // setAmount는 requestPaymentWindow 보다 반드시 먼저 호출해야 합니다.
         await widgetWindow.setAmount(amount);
 
+        // ------ '결제하기' 버튼 누르면 결제창 열기 ------
+        // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrequestpaymentwindow
         document.getElementById("request-payment-window-button").addEventListener("click", async function () {
           // 결제 요청 전 orderId, amount를 서버에 저장하세요. (결제 금액 위변조 검증용)
-          await widgetWindow.requestPaymentWindow({
-            orderId: generateRandomString(),
-            orderName: "토스 티셔츠 외 2건",
-            amount,
-            successUrl: window.location.origin + "/widget/success",
-            failUrl: window.location.origin + "/fail",
-            customerEmail: "customer123@gmail.com",
-            customerName: "김토스",
-            // customerMobilePhone: "01012341234",
-          }, {
-            variantKey: {
-              paymentMethod: "DEFAULT",
-              agreement: "AGREEMENT",
+          await widgetWindow.requestPaymentWindow(
+            {
+              orderId: generateRandomString(),
+              orderName: "토스 티셔츠 외 2건",
+              amount,
+              successUrl: currentURL + "success.asp",
+              failUrl: window.location.origin + "/public/payment/fail.asp",
+              customerEmail: "customer123@gmail.com",
+              customerName: "김토스",
+              // customerMobilePhone: "01012341234",
             },
-          });
+            {
+              variantKey: {
+                paymentMethod: "DEFAULT",
+                agreement: "AGREEMENT",
+              },
+            }
+          );
         });
       }
 
       document.getElementById("payment-window-button").addEventListener("click", () => {
-        location.href = "/payment/checkout";
-      });
-
-      document.getElementById("brandpay-button").addEventListener("click", () => {
-        location.href = "/brandpay/checkout";
+        location.href = "../payment/";
       });
 
       function generateRandomString() {
