@@ -1,25 +1,19 @@
 <template>
-  <!-- 주문서형 / 결제창형 두 가지 연동 방식을 보여주는 샘플 페이지입니다 -->
-  <div class="wrapper wrapper--wide">
-    <div class="checkout-types">
-      <div class="box_section checkout-types__item">
-        <p class="title checkout-types__title">결제위젯 (주문서형)</p>
-        <p class="typography--p checkout-types__desc">
-          <code class="method">renderPaymentMethods()</code>로 주문서에 결제수단 UI를 삽입하고, <code class="method">requestPayment()</code>로 결제를 요청해요. 결제수단 선택이 주문서 내에서 바로 이루어져요.
-        </p>
-        <span class="badge">장점</span>
-        <ul class="typography--p feature-list">
-          <li>결제수단 영역을 주문서에 자연스럽게 녹여 브랜드 일관성 유지에 유리합니다.</li>
-          <li>주문서에 결제수단이 미리 노출되어 전환율 최적화에 유리합니다.</li>
-          <li>결제위젯 어드민에서 자유롭게 커스터마이징할 수 있습니다.</li>
-        </ul>
-        <!-- [주문서형] 결제수단 UI 렌더링 영역 -->
-        <div id="payment-method"></div>
-        <!-- [주문서형] 이용약관 UI 렌더링 영역 -->
-        <div id="agreement"></div>
-        <!-- 쿠폰 체크박스 -->
+  <div class="wrapper">
+    <div class="box_section">
+      <!-- 결제 UI -->
+      <div id="payment-method"></div>
+
+      <!-- 이용약관 UI -->
+      <div id="agreement"></div>
+
+      <!-- 쿠폰 체크박스 -->
+      <div style="padding-left: 30px">
         <div class="checkable typography--p">
-          <label htmlFor="coupon-box" class="checkable__label typography--regular">
+          <label
+            htmlFor="coupon-box"
+            class="checkable__label typography--regular"
+          >
             <input
               :disabled="!ready"
               @change="updateAmount"
@@ -31,44 +25,37 @@
             <span class="checkable__label-text">5,000원 쿠폰 적용</span>
           </label>
         </div>
-        <!-- [주문서형] 결제하기 버튼 -->
-        <button :disabled="!ready" @click="requestPayment" class="button button--block">
-          결제하기
-        </button>
       </div>
 
-      <div class="box_section checkout-types__item">
-        <p class="title checkout-types__title">결제위젯 (결제창형)</p>
-        <p class="typography--p checkout-types__desc">
-          <code class="method">requestPaymentWindow()</code> 로 결제창이 바로 열려요.<br />결제수단 선택도 창 안에서 이루어져요.
-        </p>
-        <span class="badge">장점</span>
-        <ul class="typography--p feature-list">
-          <li>버튼 클릭 한 번으로 전체 결제 플로우를 바로 시작할 수 있습니다.</li>
-          <li>결제 UI가 별도 창에서 열려 기존 주문서 레이아웃에 영향을 주지 않습니다.</li>
-          <li>결제위젯 어드민에서 자유롭게 커스터마이징할 수 있습니다.</li>
-        </ul>
-        <!-- 결제수단 UI 없음 플레이스홀더 -->
-        <div class="payment-method-placeholder">
-          결제창이 팝업으로 열려요<br />
-          <span class="payment-method-placeholder__sub">결제수단 선택은 창 안에서 이루어져요</span>
-        </div>
-        <!-- [결제창형] 결제창 열기 버튼 -->
-        <button @click="requestPaymentWindow" class="button button--block">
-          결제하기
-        </button>
-      </div>
+      <!-- 결제하기 버튼 -->
+      <button
+        :disabled="!ready"
+        @click="requestPayment"
+        class="button"
+        style="margin-top: 30px"
+      >
+        결제하기
+      </button>
     </div>
 
-    <div class="checkout-nav-divider">
-      <span>위젯 없이 직접 연동하기</span>
-    </div>
-    <div class="checkout-nav">
+    <div
+      class="box_section"
+      style="
+        padding: 40px 30px 50px 30px;
+        margin-top: 30px;
+        margin-bottom: 50px;
+      "
+    >
       <RouterLink to="/brandpay/checkout">
-        <button class="button button--nav">위젯 없이 브랜드페이만 연동하기</button>
+        <button class="button" style="margin-top: 30px">
+          위젯 없이 브랜드페이만 연동하기
+        </button>
       </RouterLink>
+
       <RouterLink to="/payment/checkout">
-        <button class="button button--nav">위젯 없이 결제창만 연동하기</button>
+        <button class="button" style="margin-top: 30px">
+          위젯 없이 결제창만 연동하기
+        </button>
       </RouterLink>
     </div>
   </div>
@@ -93,7 +80,6 @@ export default {
     return {
       ready: false,
       widgets: null,
-      widgetWindow: null,
 
       clientKey,
       customerKey,
@@ -108,14 +94,14 @@ export default {
       try {
         const tossPayments = await loadTossPayments(this.clientKey);
 
+        // 회원 결제
+        // @docs https://docs.tosspayments.com/sdk/v2/js#tosspaymentswidgets
         const widgets = tossPayments.widgets({ customerKey: this.customerKey });
+
         // 비회원 결제
         // const widgets = tossPayments.widgets({ customerKey: ANONYMOUS });
 
-        const widgetWindow = tossPayments.widgets({ customerKey: this.customerKey });
-
         this.widgets = widgets;
-        this.widgetWindow = widgetWindow;
       } catch (error) {
         console.error("Error fetching payment widget:", error);
       }
@@ -123,66 +109,61 @@ export default {
     async renderPaymentWidgets() {
       if (this.widgets == null) return;
 
-      // setAmount는 renderPaymentMethods, renderAgreement, requestPayment 보다 반드시 먼저 호출해야 합니다.
+      // ------  주문서의 결제 금액 설정 ------
+      // TODO: 위젯의 결제금액을 결제하려는 금액으로 초기화하세요.
+      // TODO: renderPaymentMethods, renderAgreement, requestPayment 보다 반드시 선행되어야 합니다.
+      // @docs https://docs.tosspayments.com/sdk/v2/js#widgetssetamount
       await this.widgets.setAmount(this.amount);
 
       await Promise.all([
-        this.widgets.renderPaymentMethods({ selector: "#payment-method", variantKey: "DEFAULT" }),
-        this.widgets.renderAgreement({ selector: "#agreement", variantKey: "AGREEMENT" }),
+        // ------  결제 UI 렌더링 ------
+        // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderpaymentmethods
+        this.widgets.renderPaymentMethods({
+          selector: "#payment-method",
+          // 렌더링하고 싶은 결제 UI의 variantKey
+          // 결제 수단 및 스타일이 다른 멀티 UI를 직접 만들고 싶다면 계약이 필요해요.
+          // @docs https://docs.tosspayments.com/guides/v2/payment-widget/admin#새로운-결제-ui-추가하기
+          variantKey: "DEFAULT",
+        }),
+        // ------  이용약관 UI 렌더링 ------
+        // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderagreement
+        this.widgets.renderAgreement({
+          selector: "#agreement",
+          variantKey: "AGREEMENT",
+        }),
       ]);
 
       this.ready = true;
-    },
-    async initWidgetWindow() {
-      if (this.widgetWindow == null) return;
-
-      // setAmount는 requestPaymentWindow 보다 반드시 먼저 호출해야 합니다.
-      await this.widgetWindow.setAmount(this.amount);
     },
     async requestPayment() {
       if (this.widgets == null || !this.ready) return;
 
       try {
-        // 결제 요청 전 orderId, amount를 서버에 저장하세요. (결제 금액 위변조 검증용)
-        await this.widgets.requestPayment({
-          orderId: generateRandomString(),
-          orderName: "토스 티셔츠 외 2건",
-          successUrl: window.location.origin + "/widget/success",
-          failUrl: window.location.origin + "/fail",
-          customerEmail: "customer123@gmail.com",
-          customerName: "김토스",
-          // customerMobilePhone: "01012341234",
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    async requestPaymentWindow() {
-      if (this.widgetWindow == null) return;
+        // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
+        // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrequestpayment
 
-      try {
-        // 결제 요청 전 orderId, amount를 서버에 저장하세요. (결제 금액 위변조 검증용)
-        await this.widgetWindow.requestPaymentWindow({
-          orderId: generateRandomString(),
+        // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
+        // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
+        await this.widgets.requestPayment({
+          orderId: generateRandomString(), // 고유 주문 번호
           orderName: "토스 티셔츠 외 2건",
-          amount: this.amount,
-          successUrl: window.location.origin + "/widget/success",
-          failUrl: window.location.origin + "/fail",
+          successUrl: window.location.origin + "/widget/success", // 결제 요청이 성공하면 리다이렉트되는 URL
+          failUrl: window.location.origin + "/fail", // 결제 요청이 실패하면 리다이렉트되는 URL
           customerEmail: "customer123@gmail.com",
           customerName: "김토스",
+          // 가상계좌 안내, 퀵계좌이체 휴대폰 번호 자동 완성에 사용되는 값입니다. 필요하다면 주석을 해제해 주세요.
           // customerMobilePhone: "01012341234",
-        }, {
-          variantKey: {
-            paymentMethod: "DEFAULT",
-            agreement: "AGREEMENT",
-          },
         });
       } catch (error) {
+        // 에러 처리하기
         console.error(error);
       }
     },
     async updateAmount() {
       const coupon = document.getElementById("coupon-box");
+
+      // ------  주문서의 결제 금액이 변경되었을 경우 결제 금액 업데이트 ------
+      // @docs https://docs.tosspayments.com/sdk/v2/js#widgetssetamount
 
       if (coupon.checked) {
         this.amount.value -= 5000;
@@ -196,7 +177,6 @@ export default {
   async mounted() {
     await this.fetchPaymentWidgets();
     await this.renderPaymentWidgets();
-    await this.initWidgetWindow();
   },
 };
 </script>
