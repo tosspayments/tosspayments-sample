@@ -46,8 +46,9 @@ $ v18.18.2
 
 - **시크릿 키**
 
-  - **결제위젯**: `lib/tossApi.js` 파일에 있는 `widgetSecretKey`를 내 결제위젯 시크릿 키로 수정하세요.
-  - **결제창 및 브랜드페이**: `lib/tossApi.js` 파일에 있는 `apiSecretKey`를 내 API 개별 연동 시크릿 키로 수정하세요.
+  - 환경 변수로 `TOSS_WIDGET_SECRET_KEY`, `TOSS_API_SECRET_KEY`를 설정하면 기본 테스트 키 대신 사용됩니다.
+  - **결제위젯**: `TOSS_WIDGET_SECRET_KEY`에 내 결제위젯 시크릿 키를 설정하세요.
+  - **결제창 및 브랜드페이**: `TOSS_API_SECRET_KEY`에 내 API 개별 연동 시크릿 키를 설정하세요.
 
   * 시크릿 키는 외부에 절대 노출되면 안 됩니다.
 
@@ -59,6 +60,8 @@ $ v18.18.2
 ## 계좌자동결제(퀵계좌이체 빌링) 테스트
 
 정기 결제 화면에서 `카드 자동결제`, `계좌 자동결제`를 선택해 자동결제 수단 등록과 자동결제 승인 API를 테스트할 수 있습니다.
+
+> 샘플은 이해를 돕기 위해 빌링키를 메모리(Map)에 저장합니다. 운영 환경에서는 데이터베이스/캐시 같은 영구 저장소를 사용하세요.
 
 관련 문서: [자동결제(빌링) 이해하기](https://docs.tosspayments.com/guides/v2/billing/integration), [자동결제 API 레퍼런스](https://docs.tosspayments.com/reference/billing)
 

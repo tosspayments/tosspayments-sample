@@ -35,7 +35,9 @@ function WidgetSuccessContent() {
       const json = await response.json();
 
       if (!response.ok) {
-        throw { message: json.message, code: json.code };
+        const error = new Error(json.message);
+        error.code = json.code;
+        throw error;
       }
 
       return json;
