@@ -92,7 +92,6 @@ export function WidgetCheckoutPage() {
                 id="coupon-box"
                 className="checkable__input"
                 type="checkbox"
-                aria-checked="true"
                 disabled={!ready}
                 // ------  주문서의 결제 금액이 변경되었을 경우 결제 금액 업데이트 ------
                 // @docs https://docs.tosspayments.com/sdk/v2/js#widgetssetamount
