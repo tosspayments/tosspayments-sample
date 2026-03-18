@@ -5,6 +5,7 @@
 사용하는 언어를 선택해서 샘플 프로젝트로 빠르게 결제 연동을 시작하세요.
 
 - [Express + React](https://github.com/tosspayments/tosspayments-sample/tree/main/express-react)
+- [Next.js + React](https://github.com/tosspayments/tosspayments-sample/tree/main/nextjs-react)
 - [Express + Vue](https://github.com/tosspayments/tosspayments-sample/tree/main/express-vue)
 - [Nuxt 4 + JavaScript](https://github.com/tosspayments/tosspayments-sample/tree/main/nuxt4-javascript)
 - [Express + JavaScript](https://github.com/tosspayments/tosspayments-sample/tree/main/express-javascript)
