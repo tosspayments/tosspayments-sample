@@ -185,7 +185,7 @@ export default {
     async requestBillingAuth() {
       await this.payment.requestBillingAuth({
         method: this.selectedBillingMethod,
-        successUrl: window.location.origin + `/payment/billing?billingMethod=${this.selectedBillingMethod}&`,
+        successUrl: window.location.origin + `/payment/billing?billingMethod=${this.selectedBillingMethod}`,
         failUrl: window.location.origin + "/fail",
         customerEmail: "customer123@gmail.com",
         customerName: "김토스",

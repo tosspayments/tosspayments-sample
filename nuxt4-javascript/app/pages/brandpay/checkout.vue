@@ -61,7 +61,7 @@ export default {
         },
         orderId: generateRandomString(),
         orderName: "토스 티셔츠 외 2건",
-        successUrl: window.location.origin + `/brandpay/success?customerKey=${this.customerKey}&`,
+        successUrl: window.location.origin + `/brandpay/success?customerKey=${this.customerKey}`,
         failUrl: window.location.origin + "/fail",
         customerEmail: "customer123@gmail.com",
         customerName: "김토스",
