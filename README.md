@@ -6,6 +6,7 @@
 
 - [Express + React](https://github.com/tosspayments/tosspayments-sample/tree/main/express-react)
 - [Express + Vue](https://github.com/tosspayments/tosspayments-sample/tree/main/express-vue)
+- [Nuxt 4 + JavaScript](https://github.com/tosspayments/tosspayments-sample/tree/main/nuxt4-javascript)
 - [Express + JavaScript](https://github.com/tosspayments/tosspayments-sample/tree/main/express-javascript)
 - [PHP + JavaScript](https://github.com/tosspayments/tosspayments-sample/tree/main/asp-javascript)
 - [ASP + JavaScript](https://github.com/tosspayments/tosspayments-sample/tree/main/php-javascript)

@@ -1,0 +1,3 @@
+<template>
+  <WidgetCheckoutContent />
+</template>
