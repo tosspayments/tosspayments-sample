@@ -8,7 +8,9 @@
     <h2 id="title" v-if="billingConfirmed">
       {{ billingMethodLabel }} 자동결제 승인에 성공했어요
     </h2>
-    <h2 id="title" v-else>{{ billingMethodLabel }} 등록을 완료했어요</h2>
+    <h2 id="title" v-else>
+      {{ billingMethodLabel }} 등록을 완료했어요
+    </h2>
 
     <div v-if="billingConfirmed === false">
       <button id="confirm" class="button" @click="confirm">
@@ -51,11 +53,23 @@
       <div><b>method:</b> {{ responseData.method || "-" }}</div>
       <div>
         <b>card:</b>
-        <pre>{{ responseData.card ? JSON.stringify(responseData.card, null, 2) : "-" }}</pre>
+        <pre>{{
+          responseData.card
+            ? JSON.stringify(responseData.card, null, 2)
+            : "-"
+        }}</pre>
       </div>
       <div>
         <b>transfers:</b>
-        <pre>{{ responseData.transfers || responseData.transfer ? JSON.stringify(responseData.transfers || responseData.transfer, null, 2) : "-" }}</pre>
+        <pre>{{
+          responseData.transfers || responseData.transfer
+            ? JSON.stringify(
+                responseData.transfers || responseData.transfer,
+                null,
+                2,
+              )
+            : "-"
+        }}</pre>
       </div>
       <pre>{{ JSON.stringify(responseData, null, 4) }}</pre>
     </div>
@@ -72,7 +86,8 @@ const router = useRouter();
 const responseData = ref(null);
 const billingConfirmed = ref(false);
 const billingMethod = route.query.billingMethod || "CARD";
-const billingMethodLabel = billingMethod === "TRANSFER" ? "계좌 자동결제" : "카드 자동결제";
+const billingMethodLabel =
+  billingMethod === "TRANSFER" ? "계좌 자동결제" : "카드 자동결제";
 
 // 서버로 빌링키 발급을 위해 authKey 를 보내세요.
 // @docs https://docs.tosspayments.com/guides/v2/billing/integration
@@ -106,7 +121,9 @@ issueBillingKey()
   })
   .catch((error) => {
     // TODO: 빌링키 발급에 실패했을 경우 UI 처리 로직을 구현하세요.
-    router.replace(`/fail?code=${error.code}&message=${error.message}`);
+    router.replace(
+      `/fail?code=${encodeURIComponent(error.code)}&message=${encodeURIComponent(error.message)}`,
+    );
   });
 
 // 일반적으로 정기결제는 특정 시점에 배치를 통해 구현하지만,
@@ -145,7 +162,9 @@ async function confirm() {
       responseData.value = data;
     })
     .catch((error) => {
-      router.replace(`/fail?code=${error.code}&message=${error.message}`);
+      router.replace(
+        `/fail?code=${encodeURIComponent(error.code)}&message=${encodeURIComponent(error.message)}`,
+      );
     });
 }
 </script>

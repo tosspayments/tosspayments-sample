@@ -4,11 +4,11 @@
 
 ## 준비하기
 
-샘플 프로젝트를 사용하려면 [Node.js](https://nodejs.org/ko/) 18.3.0 이상의 버전이 필요합니다.
+샘플 프로젝트를 사용하려면 Node.js 20.9.0 이상의 버전이 필요합니다.
 
 ```sh
 $ node -v
-$ v18.18.2
+$ v20.9.0
 ```
 
 ## 실행하기
@@ -40,19 +40,16 @@ $ v18.18.2
 샘플에 있는 키로 연동이 가능하지만, 내 테스트 연동 키를 사용하면 테스트 결제내역, 웹훅 기능을 사용할 수 있어요. 내 테스트 연동 키는 [개발자센터](https://developers.tosspayments.com/my/api-keys)에서 확인할 수 있습니다. 더 자세한 내용은 [API 키 가이드](https://docs.tosspayments.com/reference/using-api/api-keys)를 참고하세요.
 
 - **클라이언트 키**
-
   - `app/components/WidgetCheckoutContent.vue` 파일에 있는 `clientKey`를 내 결제위젯 연동 클라이언트 키로 수정하세요.
   - `app/pages/payment/checkout.vue`, `app/pages/brandpay/checkout.vue` 파일에 있는 `clientKey`를 내 API 개별 연동 클라이언트 키로 수정하세요.
 
 - **시크릿 키**
-
   - `nuxt.config.ts` 파일에 있는 `widgetSecretKey`를 내 결제위젯 시크릿 키로 수정하세요.
   - `nuxt.config.ts` 파일에 있는 `apiSecretKey`를 내 API 개별 연동 시크릿 키로 수정하세요.
 
   \* 시크릿 키는 외부에 절대 노출되면 안 됩니다.
 
 - **브랜드페이**
-
   - 브랜드페이를 테스트하고 싶다면 반드시 클라이언트 키, 시크릿 키를 내 키로 바꿔주세요.
   - 개발자센터의 브랜드페이 메뉴에서 리다이렉트 URL도 반드시 등록해야 됩니다. `app/pages/brandpay/checkout.vue` 파일을 참고해주세요.
 

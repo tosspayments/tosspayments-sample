@@ -57,7 +57,7 @@ export default {
     return {
       payment: null,
       customerKey: "",
-      selectedPaymentMethod: null,
+      selectedPaymentMethod: "TRANSFER",
       selectedBillingMethod: "CARD",
     };
   },

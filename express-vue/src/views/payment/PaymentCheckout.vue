@@ -18,7 +18,7 @@
           class="button2"
           @click="selectedPaymentMethod = 'TRANSFER'"
         >
-          계좌이체
+          퀵계좌이체
         </button>
         <button
           id="VIRTUAL_ACCOUNT"
@@ -111,7 +111,7 @@ export default {
   data() {
     return {
       payment: null,
-      selectedPaymentMethod: null,
+      selectedPaymentMethod: "TRANSFER",
       selectedBillingMethod: "CARD",
     };
   },

@@ -162,7 +162,7 @@ export default function PaymentCheckoutPage() {
             카드
           </button>
           <button id="TRANSFER" className={`button2 ${selectedPaymentMethod === "TRANSFER" ? "active" : ""}`} onClick={() => setSelectedPaymentMethod("TRANSFER")}>
-            계좌이체
+            퀵계좌이체
           </button>
           <button id="VIRTUAL_ACCOUNT" className={`button2 ${selectedPaymentMethod === "VIRTUAL_ACCOUNT" ? "active" : ""}`} onClick={() => setSelectedPaymentMethod("VIRTUAL_ACCOUNT")}>
             가상계좌

@@ -1,7 +1,11 @@
 {
   "name": "nuxt4-javascript",
+  "version": "0.1.0",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",

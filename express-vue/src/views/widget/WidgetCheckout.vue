@@ -20,7 +20,6 @@
               id="coupon-box"
               class="checkable__input"
               type="checkbox"
-              aria-checked="true"
             />
             <span class="checkable__label-text">5,000원 쿠폰 적용</span>
           </label>
