@@ -1,4 +1,5 @@
 import { billingKeyMap, tossRequest } from "@/lib/tossApi";
+import { NextResponse } from "next/server";
 
 export async function POST(request) {
   const { customerKey, authKey } = await request.json();
@@ -10,5 +11,5 @@ export async function POST(request) {
     billingKeyMap.set(customerKey, result.billingKey);
   }
 
-  return Response.json(result, { status: response.status });
+  return NextResponse.json(result, { status: response.status });
 }

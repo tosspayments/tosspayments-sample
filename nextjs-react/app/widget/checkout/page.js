@@ -67,7 +67,6 @@ export default function WidgetCheckoutPage() {
                 id="coupon-box"
                 className="checkable__input"
                 type="checkbox"
-                aria-checked="true"
                 disabled={!ready}
                 onChange={async (event) => {
                   if (event.target.checked) {

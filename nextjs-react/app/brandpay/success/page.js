@@ -83,13 +83,11 @@ function BrandpaySuccessContent() {
           </div>
         </div>
         <div className="p-grid-col">
-          <a href="https://docs.tosspayments.com/guides/v2/payment-widget/integration" target="_blank" rel="noreferrer">
-            <button className="button p-grid-col5">연동 문서</button>
+          <a className="button p-grid-col5" href="https://docs.tosspayments.com/guides/v2/payment-widget/integration" target="_blank" rel="noreferrer">
+            연동 문서
           </a>
-          <a href="https://discord.gg/A4fRFXQhRu" target="_blank" rel="noreferrer">
-            <button className="button p-grid-col5" style={{ backgroundColor: "#e8f3ff", color: "#1b64da" }}>
-              실시간 문의
-            </button>
+          <a className="button p-grid-col5" href="https://discord.gg/A4fRFXQhRu" target="_blank" rel="noreferrer" style={{ backgroundColor: "#e8f3ff", color: "#1b64da" }}>
+            실시간 문의
           </a>
         </div>
       </div>
