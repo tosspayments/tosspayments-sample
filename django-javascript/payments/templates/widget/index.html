@@ -1,9 +1,11 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
-    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>결제위젯 방식 비교</title>
@@ -16,7 +18,6 @@
       // TODO: clientKey는 개발자센터의 결제위젯 연동 키 > 클라이언트 키로 바꾸세요.
       // @docs https://docs.tosspayments.com/sdk/v2/js#토스페이먼츠-초기화
       const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
-      const currentURL = window.location.href.replace(/[^/]*$/, '');
       const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
     </script>
 
@@ -26,7 +27,7 @@
       <div class="wrapper" style="flex: 1; display: flex">
         <div class="box_section" style="padding: 40px 30px 50px 30px; margin-top: 30px; margin-bottom: 50px; flex: 1">
           <h2 class="title">주문서형 결제</h2>
-          <p style="margin: 8px 0 24px; color: #8b95a1; font-size: 14px">주문서 안에서 결제 방법 선택(checkout.html)</p>
+          <p style="margin: 8px 0 24px; color: #8b95a1; font-size: 14px">주문서 안에서 결제 방법 선택(widget/checkout)</p>
           <!-- 결제 UI -->
           <div id="payment-method"></div>
           <!-- 이용약관 UI -->
@@ -86,8 +87,8 @@
             await widgets.requestPayment({
               orderId: generateRandomString(),
               orderName: "토스 티셔츠 외 2건",
-              successUrl: currentURL + "success.jsp",
-              failUrl: currentURL + "fail.jsp",
+              successUrl: window.location.origin + "/widget/success",
+              failUrl: window.location.origin + "/fail",
               customerEmail: "customer123@gmail.com",
               customerName: "김토스",
               // 가상계좌 안내, 퀵계좌이체 휴대폰 번호 자동 완성에 사용되는 값입니다. 필요하다면 주석을 해제해 주세요.
@@ -101,7 +102,7 @@
       <div class="wrapper" style="flex: 1; display: flex">
         <div class="box_section" style="padding: 40px 30px 50px 30px; margin-top: 30px; margin-bottom: 50px; flex: 1; display: flex; flex-direction: column">
           <h2 class="title">결제창형 결제</h2>
-          <p style="margin: 8px 0 24px; color: #8b95a1; font-size: 14px">결제하기 버튼을 눌러 결제창 열기(checkout-window.html)</p>
+          <p style="margin: 8px 0 24px; color: #8b95a1; font-size: 14px">결제하기 버튼을 눌러 결제창 열기(widget/checkout-window)</p>
           <!-- 주문서형과 높이를 맞추기 위한 플레이스홀더 -->
           <div style="flex: 1; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; gap: 8px; color: #8b95a1;">
             <span style="font-size: 14px; font-weight: 600;">결제수단 선택 UI 없음</span>
@@ -144,8 +145,8 @@
                 await widgetWindow.requestPayment({
                   orderId: generateRandomString(),
                   orderName: "토스 티셔츠 외 2건",
-                  successUrl: currentURL + "success.jsp",
-                  failUrl: currentURL + "fail.jsp",
+                  successUrl: window.location.origin + "/widget/success",
+                  failUrl: window.location.origin + "/fail",
                   customerEmail: "customer123@gmail.com",
                   customerName: "김토스",
                   // 가상계좌 안내, 퀵계좌이체 휴대폰 번호 자동 완성에 사용되는 값입니다. 필요하다면 주석을 해제해 주세요.
@@ -175,11 +176,11 @@
     </div>
     <script>
       document.getElementById("nav-payment-window-button").addEventListener("click", () => {
-        location.href = "/public/payment/checkout.html";
+        location.href = "/payment/checkout";
       });
 
       document.getElementById("brandpay-button").addEventListener("click", () => {
-        location.href = "/public/brandpay/checkout.html";
+        location.href = "/brandpay/checkout";
       });
     </script>
   </body>

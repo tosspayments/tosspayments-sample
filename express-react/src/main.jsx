@@ -7,13 +7,15 @@ import { PaymentBillingPage } from "./pages/payment/PaymentBilling";
 import { PaymentCheckoutPage } from "./pages/payment/PaymentCheckout";
 import { PaymentSuccessPage } from "./pages/payment/PaymentSuccess";
 import { BrandpaySuccessPage } from "./pages/brandpay/BrandpaySuccess";
+import { WidgetIndexPage } from "./pages/widget/WidgetIndex";
 import { WidgetCheckoutPage } from "./pages/widget/WidgetCheckout";
+import { WidgetCheckoutWindowPage } from "./pages/widget/WidgetCheckoutWindow";
 import { WidgetSuccessPage } from "./pages/widget/WidgetSuccess";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <WidgetCheckoutPage />,
+    element: <WidgetIndexPage />,
   },
   {
     path: "widget",
@@ -23,14 +25,14 @@ const router = createBrowserRouter([
         element: <WidgetCheckoutPage />,
       },
       {
+        path: "checkout-window",
+        element: <WidgetCheckoutWindowPage />,
+      },
+      {
         path: "success",
         element: <WidgetSuccessPage />,
       },
     ],
-  },
-  {
-    path: "checkout",
-    element: <WidgetCheckoutPage />,
   },
   {
     path: "brandpay",

@@ -37,27 +37,6 @@
         결제하기
       </button>
     </div>
-
-    <div
-      class="box_section"
-      style="
-        padding: 40px 30px 50px 30px;
-        margin-top: 30px;
-        margin-bottom: 50px;
-      "
-    >
-      <RouterLink to="/brandpay/checkout">
-        <button class="button" style="margin-top: 30px">
-          위젯 없이 브랜드페이만 연동하기
-        </button>
-      </RouterLink>
-
-      <RouterLink to="/payment/checkout">
-        <button class="button" style="margin-top: 30px">
-          위젯 없이 결제창만 연동하기
-        </button>
-      </RouterLink>
-    </div>
   </div>
 </template>
 
