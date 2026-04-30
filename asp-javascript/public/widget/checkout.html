@@ -1,14 +1,12 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
-    <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="./style.css" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>토스페이먼츠 샘플 프로젝트</title>
+    <title>주문서형 결제위젯</title>
     <!-- SDK 추가 -->
     <script src="https://js.tosspayments.com/v2/standard"></script>
   </head>
@@ -34,6 +32,7 @@
       </div>
     </div>
     <script>
+      let currentURL = window.location.href.replace(/[^/]*$/, '');
       main();
 
       async function main() {
@@ -69,9 +68,6 @@
           // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderpaymentmethods
           widgets.renderPaymentMethods({
             selector: "#payment-method",
-            // 렌더링하고 싶은 결제 UI의 variantKey
-            // 결제 수단 및 스타일이 다른 멀티 UI를 직접 만들고 싶다면 계약이 필요해요.
-            // @docs https://docs.tosspayments.com/guides/v2/payment-widget/admin#새로운-결제-ui-추가하기
             variantKey: "DEFAULT",
           }),
           // ------  이용약관 UI 렌더링 ------
@@ -108,8 +104,8 @@
           await widgets.requestPayment({
             orderId: generateRandomString(),
             orderName: "토스 티셔츠 외 2건",
-            successUrl: window.location.origin + "/widget/success",
-            failUrl: window.location.origin + "/fail",
+            successUrl: currentURL + "success.asp",
+            failUrl: currentURL + "fail.asp",
             customerEmail: "customer123@gmail.com",
             customerName: "김토스",
             // 가상계좌 안내, 퀵계좌이체 휴대폰 번호 자동 완성에 사용되는 값입니다. 필요하다면 주석을 해제해 주세요.
