@@ -27,11 +27,10 @@ $ v18.18.2
    $ cd tosspayments-sample/go-react
    ```
 
-2. 의존성 패키지를 다운로드하고 서버를 실행합니다.
+2. 서버를 실행합니다.
 
    ```sh
    $ cd backend
-   $ go mod tidy  # Go 의존성 패키지 다운로드
    $ go run main.go  # 서버 실행
    ```
 
@@ -57,20 +56,32 @@ $ v18.18.2
 
 - **클라이언트 키**
 
-  - `client/src/pages/Checkout.jsx` 파일에 있는 `clientKey`를 내 결제위젯 연동 클라이언트 키로 수정하세요.
-  - `client/src/pages/payment/PaymentCheckout.jsx`, `client/src/pages/brandpay/BrandpayCheckout.jsx` 파일에 있는 `clientKey`를 내 API 개별 연동 클라이언트 키로 수정하세요.
+  - **결제위젯**: `frontend/src/pages/widget/WidgetCheckout.jsx` 파일에 있는 `clientKey`를 내 결제위젯 연동 클라이언트 키로 수정하세요.
+  - **결제창 및 브랜드페이**: `frontend/src/pages/payment/PaymentCheckout.jsx`, `frontend/src/pages/brandpay/BrandpayCheckout.jsx` 파일에 있는 `clientKey`를 내 API 개별 연동 클라이언트 키로 수정하세요.
 
 - **시크릿 키**
 
-  - **결제위젯**: `server/config.go` 파일에 있는 `WidgetSecretKey`를 내 결제위젯 시크릿 키로 수정하세요.
-  - **결제창 및 브랜드페이**: `server/config.go` 파일에 있는 `ApiSecretKey`를 내 API 개별 연동 시크릿 키로 수정하세요.
+  - **결제위젯**: `backend/main.go` 파일에 있는 `widgetSecretKey`를 내 결제위젯 시크릿 키로 수정하세요.
+  - **결제창 및 브랜드페이**: `backend/main.go` 파일에 있는 `apiSecretKey`를 내 API 개별 연동 시크릿 키로 수정하세요.
 
   \* 시크릿 키는 외부에 절대 노출되면 안 됩니다.
 
 - **브랜드페이**
 
   - 브랜드페이를 테스트하고 싶다면 반드시 클라이언트 키, 시크릿 키를 내 키로 바꿔주세요.
-  - 개발자센터의 브랜드페이 메뉴에서 리다이렉트 URL도 반드시 등록해야 됩니다. `client/src/pages/brandpay/BrandpayCheckout.jsx` 파일을 참고해주세요.
+  - 개발자센터의 브랜드페이 메뉴에서 리다이렉트 URL도 반드시 등록해야 됩니다. `frontend/src/pages/brandpay/BrandpayCheckout.jsx` 파일을 참고해주세요.
+
+## 계좌자동결제(퀵계좌이체 빌링) 테스트
+
+정기 결제 화면에서 `카드 자동결제`, `계좌 자동결제`를 선택해 `requestBillingAuth()`를 테스트할 수 있습니다.
+
+- `CARD` 또는 `TRANSFER`를 선택한 뒤 자동결제 수단 등록을 진행하세요.
+- 성공 URL 쿼리의 `customerKey`, `authKey`, `billingMethod`를 사용해 서버에서 빌링키 발급을 호출하세요.
+- 빌링키 발급/승인 응답에서 `method`와 `card` 또는 `transfers`(혹은 `transfer`) 필드를 확인하세요.
+- `NOT_SUPPORTED_METHOD` 오류가 발생하면 자동결제 계약된 MID/키인지 확인하세요.
+- 이번 샘플에는 `BILLING_DELETED` 웹훅 엔드포인트가 포함되지 않습니다. 운영에서는 별도 웹훅 연동을 권장합니다.
+
+관련 문서: [자동결제(빌링) 이해하기](https://docs.tosspayments.com/guides/v2/billing/integration), [자동결제 API 레퍼런스](https://docs.tosspayments.com/reference/billing)
 
 ## 더 알아보기
 

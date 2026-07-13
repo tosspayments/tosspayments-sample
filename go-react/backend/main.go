@@ -4,199 +4,163 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"os"
-
-	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
-// 결제 승인 요청 구조체
-type PaymentRequest struct {
-	OrderId    string `json:"orderId"`
-	PaymentKey string `json:"paymentKey"`
-	Amount     string `json:"amount"`
-}
+// TODO: 개발자센터에 로그인해서 내 결제위젯 연동 키 > 시크릿 키를 입력하세요. 시크릿 키는 외부에 공개되면 안돼요.
+// @docs https://docs.tosspayments.com/reference/using-api/api-keys
+const widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6"
+const apiSecretKey = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R"
 
-// 브랜드페이 승인 요청
-type BrandPayRequest struct {
-	OrderId     string `json:"orderId"`
-	PaymentKey  string `json:"paymentKey"`
-	Amount      string `json:"amount"`
-	CustomerKey string `json:"customerKey"`
-}
+// 토스페이먼츠 API는 시크릿 키를 사용자 ID로 사용하고, 비밀번호는 사용하지 않습니다.
+// 비밀번호가 없다는 것을 알리기 위해 시크릿 키 뒤에 콜론을 추가합니다.
+// @docs https://docs.tosspayments.com/reference/using-api/authorization#인증
+var encryptedWidgetSecretKey = "Basic " + base64.StdEncoding.EncodeToString([]byte(widgetSecretKey+":"))
+var encryptedApiSecretKey = "Basic " + base64.StdEncoding.EncodeToString([]byte(apiSecretKey+":"))
 
-// 빌링키 발급 요청
-type BillingKeyRequest struct {
-	CustomerKey string `json:"customerKey"`
-	AuthKey     string `json:"authKey"`
-}
-
-// 카드 자동결제 요청
-type BillingPaymentRequest struct {
-	CustomerKey   string `json:"customerKey"`
-	Amount        string `json:"amount"`
-	OrderId       string `json:"orderId"`
-	OrderName     string `json:"orderName"`
-	CustomerEmail string `json:"customerEmail"`
-	CustomerName  string `json:"customerName"`
-}
+// 발급된 빌링키를 구매자 정보로 찾을 수 있도록 저장해둡니다.
+var billingKeyMap = map[string]string{}
 
 func main() {
-	// 환경 변수 로드
-	if err := godotenv.Load(); err != nil {
-		log.Println("Warning: No .env file found.")
-	}
+	mux := http.NewServeMux()
 
-	widgetSecretKey := os.Getenv("WIDGET_SECRET_KEY")
-	apiSecretKey := os.Getenv("API_SECRET_KEY")
-
-	// Toss Payments API 인증키 인코딩
-	encryptedWidgetSecretKey := "Basic " + base64.StdEncoding.EncodeToString([]byte(widgetSecretKey+":"))
-	encryptedApiSecretKey := "Basic " + base64.StdEncoding.EncodeToString([]byte(apiSecretKey+":"))
-
-	r := gin.Default()
-	r.Use(gin.Logger())
-
-	// 결제 위젯 승인
-	r.POST("/confirm/widget", func(c *gin.Context) {
-		var request PaymentRequest
-		if err := c.ShouldBindJSON(&request); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		response, err := confirmPayment(encryptedWidgetSecretKey, request)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
-		c.JSON(http.StatusOK, response)
+	// 결제위젯 승인
+	mux.HandleFunc("POST /confirm/widget", func(w http.ResponseWriter, r *http.Request) {
+		proxyTossRequest(w, r, encryptedWidgetSecretKey, "https://api.tosspayments.com/v1/payments/confirm")
 	})
 
 	// 결제창 승인
-	r.POST("/confirm/payment", func(c *gin.Context) {
-		var request PaymentRequest
-		if err := c.ShouldBindJSON(&request); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		response, err := confirmPayment(encryptedApiSecretKey, request)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
-		c.JSON(http.StatusOK, response)
+	mux.HandleFunc("POST /confirm/payment", func(w http.ResponseWriter, r *http.Request) {
+		proxyTossRequest(w, r, encryptedApiSecretKey, "https://api.tosspayments.com/v1/payments/confirm")
 	})
 
 	// 브랜드페이 승인
-	r.POST("/confirm/brandpay", func(c *gin.Context) {
-		var request BrandPayRequest
-		if err := c.ShouldBindJSON(&request); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		response, err := confirmBrandPay(encryptedApiSecretKey, request)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
-		c.JSON(http.StatusOK, response)
+	mux.HandleFunc("POST /confirm/brandpay", func(w http.ResponseWriter, r *http.Request) {
+		proxyTossRequest(w, r, encryptedApiSecretKey, "https://api.tosspayments.com/v1/brandpay/payments/confirm")
 	})
+
+	// 브랜드페이 Access Token 발급
+	mux.HandleFunc("GET /callback-auth", handleCallbackAuth)
 
 	// 빌링키 발급
-	r.POST("/issue-billing-key", func(c *gin.Context) {
-		var request BillingKeyRequest
-		if err := c.ShouldBindJSON(&request); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
+	mux.HandleFunc("POST /issue-billing-key", handleIssueBillingKey)
 
-		response, err := issueBillingKey(encryptedApiSecretKey, request)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
+	// 자동결제 승인
+	mux.HandleFunc("POST /confirm-billing", handleConfirmBilling)
 
-		c.JSON(http.StatusOK, response)
-	})
-
-	// 카드 자동결제 승인
-	r.POST("/confirm-billing", func(c *gin.Context) {
-		var request BillingPaymentRequest
-		if err := c.ShouldBindJSON(&request); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		response, err := confirmBillingPayment(encryptedApiSecretKey, request)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
-		c.JSON(http.StatusOK, response)
-	})
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "4000"
-	}
-
-	log.Printf("🚀 Server running at http://localhost:%s/", port)
-	r.Run(":" + port)
+	log.Println("🚀 Server running at http://localhost:4000/")
+	log.Fatal(http.ListenAndServe(":4000", mux))
 }
 
-// 결제 승인 요청
-func confirmPayment(authKey string, request PaymentRequest) (map[string]interface{}, error) {
-	url := "https://api.tosspayments.com/v1/payments/confirm"
-	return postRequest(authKey, url, request)
-}
+// 브랜드페이 Access Token 발급
+// @docs https://docs.tosspayments.com/reference/brandpay#access-token-발급
+func handleCallbackAuth(w http.ResponseWriter, r *http.Request) {
+	// 요청으로 받은 customerKey 와 요청한 주체가 동일인인지 검증 후 Access Token 발급 API 를 호출하세요.
+	reqBody, _ := json.Marshal(map[string]string{
+		"grantType":   "AuthorizationCode",
+		"customerKey": r.URL.Query().Get("customerKey"),
+		"code":        r.URL.Query().Get("code"),
+	})
 
-// 브랜드페이 승인 요청
-func confirmBrandPay(authKey string, request BrandPayRequest) (map[string]interface{}, error) {
-	url := "https://api.tosspayments.com/v1/brandpay/payments/confirm"
-	return postRequest(authKey, url, request)
+	forwardTossResponse(w, encryptedApiSecretKey, "https://api.tosspayments.com/v1/brandpay/authorizations/access-token", reqBody)
 }
 
 // 빌링키 발급
-func issueBillingKey(authKey string, request BillingKeyRequest) (map[string]interface{}, error) {
-	url := "https://api.tosspayments.com/v1/billing/authorizations/issue"
-	return postRequest(authKey, url, request)
+// @docs https://docs.tosspayments.com/guides/v2/billing/integration
+func handleIssueBillingKey(w http.ResponseWriter, r *http.Request) {
+	var reqData struct {
+		CustomerKey string `json:"customerKey"`
+		AuthKey     string `json:"authKey"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&reqData); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	reqBody, _ := json.Marshal(reqData)
+	status, respBody, err := postJSON("https://api.tosspayments.com/v1/billing/authorizations/issue", encryptedApiSecretKey, reqBody)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if status >= 200 && status < 300 {
+		var result struct {
+			BillingKey string `json:"billingKey"`
+		}
+		if err := json.Unmarshal(respBody, &result); err == nil {
+			billingKeyMap[reqData.CustomerKey] = result.BillingKey
+		}
+	}
+
+	writeJSON(w, status, respBody)
 }
 
-// 카드 자동결제 승인
-func confirmBillingPayment(authKey string, request BillingPaymentRequest) (map[string]interface{}, error) {
-	url := fmt.Sprintf("https://api.tosspayments.com/v1/billing/%s", request.CustomerKey)
-	return postRequest(authKey, url, request)
+// 자동결제 승인
+func handleConfirmBilling(w http.ResponseWriter, r *http.Request) {
+	var reqData map[string]interface{}
+	if err := json.NewDecoder(r.Body).Decode(&reqData); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	customerKey, _ := reqData["customerKey"].(string)
+	billingKey := billingKeyMap[customerKey]
+
+	reqBody, _ := json.Marshal(reqData)
+	forwardTossResponse(w, encryptedApiSecretKey, "https://api.tosspayments.com/v1/billing/"+billingKey, reqBody)
 }
 
-// 공통 API 요청 함수
-func postRequest(authKey string, url string, data interface{}) (map[string]interface{}, error) {
-	jsonData, _ := json.Marshal(data)
+// 결제 승인 API를 호출하세요.
+// 결제를 승인하면 결제수단에서 금액이 차감돼요.
+// @docs https://docs.tosspayments.com/guides/v2/payment-widget/integration#3-결제-승인하기
+func proxyTossRequest(w http.ResponseWriter, r *http.Request, authKey, url string) {
+	reqBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	forwardTossResponse(w, authKey, url, reqBody)
+}
+
+func forwardTossResponse(w http.ResponseWriter, authKey, url string, reqBody []byte) {
+	status, respBody, err := postJSON(url, authKey, reqBody)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	log.Println(string(respBody))
+	writeJSON(w, status, respBody)
+}
+
+func postJSON(url, authKey string, body []byte) (int, []byte, error) {
+	req, err := http.NewRequest("POST", url, bytes.NewReader(body))
+	if err != nil {
+		return 0, nil, err
+	}
 	req.Header.Set("Authorization", authKey)
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
 	defer resp.Body.Close()
 
-	body, _ := io.ReadAll(resp.Body)
-	var result map[string]interface{}
-	json.Unmarshal(body, &result)
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, nil, err
+	}
 
-	return result, nil
+	return resp.StatusCode, respBody, nil
+}
+
+func writeJSON(w http.ResponseWriter, status int, body []byte) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	w.Write(body)
 }
