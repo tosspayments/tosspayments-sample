@@ -6,12 +6,7 @@ const router = createRouter({
     {
       path: "/",
       name: "root",
-      component: () => import("../views/widget/WidgetCheckout.vue"),
-    },
-    {
-      path: "/checkout",
-      name: "root-checkout",
-      component: () => import("../views/widget/WidgetCheckout.vue"),
+      component: () => import("../views/widget/WidgetIndex.vue"),
     },
     {
       path: "/fail",
@@ -26,6 +21,11 @@ const router = createRouter({
           path: "checkout",
           name: "widget-checkout",
           component: () => import("../views/widget/WidgetCheckout.vue"),
+        },
+        {
+          path: "checkout-window",
+          name: "widget-checkout-window",
+          component: () => import("../views/widget/WidgetCheckoutWindow.vue"),
         },
         {
           path: "success",

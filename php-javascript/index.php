@@ -1,7 +1,7 @@
 <?php
 
 if ($_SERVER['REQUEST_URI'] === '/') {
-    header("Location: /public/widget/checkout.html");
+    header("Location: /public/widget/index.html");
 	exit;
 }
 

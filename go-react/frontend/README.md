@@ -44,11 +44,15 @@ $ v18.18.2
 
 4. 로컬 환경에서 샘플 프로젝트를 확인하세요.
 
-| 제품                      | 링크                                    |
-| ------------------------- | --------------------------------------- |
-| 결제위젯                  | http://localhost:3000/widget/checkout   |
-| 결제창(일반결제/정기결제) | http://localhost:3000/payment/checkout  |
-| 브랜드페이                | http://localhost:3000/brandpay/checkout |
+| 제품                        | 링크                                                |
+| --------------------------- | --------------------------------------------------- |
+| 결제위젯 한눈에 보기        | http://localhost:3000/widget                        |
+| 결제위젯 (주문서형)         | http://localhost:3000/widget/checkout               |
+| 결제위젯 (결제창형)         | http://localhost:3000/widget/checkout-window        |
+| 결제창(일반결제/정기결제)   | http://localhost:3000/payment/checkout              |
+| 브랜드페이                  | http://localhost:3000/brandpay/checkout             |
+
+결제위젯은 주문서 안에서 결제 수단을 선택하는 **주문서형**과 버튼을 눌러 결제창을 여는 **결제창형** 두 가지 방식을 제공합니다.
 
 ## 인증하기
 

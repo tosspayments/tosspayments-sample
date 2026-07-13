@@ -38,8 +38,14 @@ def handle_response(request, resjson, status_code, success_template, fail_templa
         })
 
 # 페이지 렌더링 함수
+def widgetIndex(request):
+    return render(request, './widget/index.html')
+
 def widgetCheckout(request):
     return render(request, './widget/checkout.html')
+
+def widgetCheckoutWindow(request):
+    return render(request, './widget/checkout-window.html')
 
 def brandpayCheckout(request):
     return render(request, './brandpay/checkout.html')

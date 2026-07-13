@@ -11,19 +11,30 @@
 
 1. `/asp-javascipt/public` 샘플을 `inetpub/wwwroot`에 복사하고 실행하면 샘플 코드를 http://127.0.0.1/payment/index.html 주소에서 테스트 가능합니다.
 
+2. 로컬 환경에서 샘플 프로젝트를 확인하세요.
+
+| 제품                        | 링크                                                |
+| --------------------------- | --------------------------------------------------- |
+| 결제위젯 한눈에 보기        | http://127.0.0.1/widget/index.html                  |
+| 결제위젯 (주문서형)         | http://127.0.0.1/widget/checkout.html               |
+| 결제위젯 (결제창형)         | http://127.0.0.1/widget/checkout-window.html        |
+| 결제창(일반결제/정기결제)   | http://127.0.0.1/payment/index.html                 |
+
+결제위젯은 주문서 안에서 결제 수단을 선택하는 **주문서형**과 버튼을 눌러 결제창을 여는 **결제창형** 두 가지 방식을 제공합니다.
+
 ## 인증하기
 
 샘플에 있는 키로 연동이 가능하지만, 내 테스트 연동 키를 사용하면 테스트 결제내역, 웹훅 기능을 사용할 수 있어요. 내 테스트 연동 키는 [개발자센터](https://developers.tosspayments.com/my/api-keys)에서 확인할 수 있습니다. 더 자세한 내용은 [API 키 가이드](https://docs.tosspayments.com/reference/using-api/api-keys)를 참고하세요.
 
 - **클라이언트 키**
 
-  - **결제위젯&브랜드페이**: ASP는 결제위젯 및 브랜드페이 샘플을 제공하지 않습니다. 
+  - **결제위젯**: `public/widget/checkout.html`, `public/widget/checkout-window.html` 파일에 있는 `clientKey`를 내 결제위젯 연동 클라이언트 키로 수정하세요.
   - **결제창**: `public/payment/index.html` 파일에 있는 `clientKey`를 내 API 개별 연동 클라이언트 키로 수정하세요.
 
 - **시크릿 키**
 
-  - **결제위젯&브랜드페이**: ASP는 결제위젯 및 브랜드페이 샘플을 제공하지 않습니다. 
-  - **결제창**: `public/payment/success.asp` 및 `public/payment/billing_confirm.asp` 파일에 있는 `secretKey`를 내 API 개별 연동 시크릿 키로 수정하세요.
+  - **결제위젯**: `public/widget/success.asp` 파일에 있는 `secretkey`를 내 결제위젯 시크릿 키로 수정하세요.
+  - **결제창**: `public/payment/success.asp` 및 `public/payment/billing_confirm.asp` 파일에 있는 `secretkey`를 내 API 개별 연동 시크릿 키로 수정하세요.
 
   \* 시크릿 키는 외부에 절대 노출되면 안 됩니다.
 

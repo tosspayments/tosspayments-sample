@@ -1,6 +1,5 @@
 import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 // TODO: clientKey는 개발자센터의 결제위젯 연동 키 > 클라이언트 키로 바꾸세요.
 // TODO: server.js 의 secretKey 또한 결제위젯 연동 키가 아닌 API 개별 연동 키의 시크릿 키로 변경해야 합니다.
@@ -10,8 +9,6 @@ const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 const customerKey = generateRandomString();
 
 export function WidgetCheckoutPage() {
-  const navigate = useNavigate();
-
   const [amount, setAmount] = useState({
     currency: "KRW",
     value: 50000,
@@ -144,33 +141,6 @@ export function WidgetCheckoutPage() {
           }}
         >
           결제하기
-        </button>
-      </div>
-      <div
-        className="box_section"
-        style={{
-          padding: "40px 30px 50px 30px",
-          marginTop: "30px",
-          marginBottom: "50px",
-        }}
-      >
-        <button
-          className="button"
-          style={{ marginTop: "30px" }}
-          onClick={() => {
-            navigate("/brandpay/checkout");
-          }}
-        >
-          위젯 없이 브랜드페이만 연동하기
-        </button>
-        <button
-          className="button"
-          style={{ marginTop: "30px" }}
-          onClick={() => {
-            navigate("/payment/checkout");
-          }}
-        >
-          위젯 없이 결제창만 연동하기
         </button>
       </div>
     </div>

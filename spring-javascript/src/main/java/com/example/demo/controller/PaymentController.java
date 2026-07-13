@@ -119,7 +119,7 @@ public class PaymentController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index() {
-        return "/widget/checkout";
+        return "/widget/index";
     }
 
     @RequestMapping(value = "/fail", method = RequestMethod.GET)
