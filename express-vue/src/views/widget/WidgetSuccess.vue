@@ -112,6 +112,8 @@ confirm()
     responseData.value = data;
   })
   .catch((error) => {
-    router.replace(`/fail?code=${error.code}&message=${error.message}`);
+    router.replace(
+      `/fail?code=${encodeURIComponent(error.code)}&message=${encodeURIComponent(error.message)}`,
+    );
   });
 </script>
