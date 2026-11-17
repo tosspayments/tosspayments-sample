@@ -5,8 +5,9 @@ if ($_SERVER['REQUEST_URI'] === '/') {
 	exit;
 }
 
-$widgetSecretKey = "{WIDGET_SECRET_KEY}";
-$apiSecretKey = "{SECRET_KEY}";
+// TODO: 개발자센터에서 확인한 시크릿 키를 환경 변수로 넣으세요. 시크릿 키는 외부에 공개되면 안돼요.
+$widgetSecretKey = getenv("WIDGET_SECRET_KEY") ?: "{WIDGET_SECRET_KEY}";
+$apiSecretKey = getenv("API_SECRET_KEY") ?: "{SECRET_KEY}";
 
 $encryptedWidgetSecretKey = "Basic " . base64_encode($widgetSecretKey . ":");
 $encryptedApiSecretKey = "Basic " . base64_encode($apiSecretKey . ":");
@@ -19,7 +20,7 @@ $_SESSION['billingKeyMap'] = $_SESSION['billingKeyMap'] ?? [];
 header("Content-Type: application/json");
 
 // Main router logic
-$requestUri = $_SERVER['REQUEST_URI'];
+$requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
 switch ($requestUri) {
@@ -85,7 +86,7 @@ function confirmPayment($authKey) {
     ]);
 
     $response = sendRequest("https://api.tosspayments.com/v1/payments/confirm", $authKey, $postData);
-    echo $response;
+    echo omitKeys($response, ['secret']);
 
     // 응답 데이터를 JSON 형식으로 파싱
     $responseData = json_decode($response, true);
@@ -119,7 +120,7 @@ function confirmBrandPay($authKey) {
     ]);
 
     $response = sendRequest("https://api.tosspayments.com/v1/brandpay/payments/confirm", $authKey, $postData);
-    echo $response;
+    echo omitKeys($response, ['secret']);
     
     // 응답 데이터를 JSON 형식으로 파싱
     $responseData = json_decode($response, true);
@@ -142,7 +143,8 @@ function getAuthToken($authKey) {
     ]);
 
     $response = sendRequest("https://api.tosspayments.com/v1/brandpay/authorizations/access-token", $authKey, $postData);
-    echo $response;
+    // TODO: 발급받은 Access Token, Refresh Token 은 서버에 저장하고 브라우저로 보내지 마세요.
+    echo omitKeys($response, ['accessToken', 'refreshToken']);
 }
 
 function issueBillingKey($authKey) {
@@ -188,7 +190,7 @@ function confirmBilling($authKey, $billingKeyMap) {
         ]);
 
         $response = sendRequest("https://api.tosspayments.com/v1/billing/$billingKey", $authKey, $postData);
-        echo $response;
+        echo omitKeys($response, ['secret']);
     } else {
         http_response_code(404);
         echo json_encode(["error" => "Billing key not found for customerKey"]);
@@ -207,8 +209,29 @@ function sendRequest($url, $authKey, $postData) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $response = curl_exec($ch);
+    if ($response === false) {
+        $error = curl_error($ch);
+        curl_close($ch);
+        http_response_code(500);
+        return json_encode(['code' => 'REQUEST_FAILED', 'message' => $error]);
+    }
+
+    // 토스페이먼츠 응답 상태 코드를 그대로 돌려줘서, 승인 실패를 성공으로 처리하지 않게 해요.
+    http_response_code(curl_getinfo($ch, CURLINFO_HTTP_CODE));
     curl_close($ch);
 
     return $response;
+}
+
+// 브라우저에는 화면에 필요한 값만 보내세요. 가상계좌 웹훅 검증에 쓰는 secret, 브랜드페이 토큰은 서버에만 저장하세요.
+function omitKeys($response, $keys) {
+    $data = json_decode($response, true);
+    if (!is_array($data)) {
+        return $response;
+    }
+    foreach ($keys as $key) {
+        unset($data[$key]);
+    }
+    return json_encode($data, JSON_UNESCAPED_UNICODE);
 }
 ?>

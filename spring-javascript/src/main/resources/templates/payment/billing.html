@@ -110,12 +110,21 @@
       const transfers = data.transfers || data.transfer;
       const transfer = transfers ? JSON.stringify(transfers, null, 2) : "-";
 
-      document.getElementById("response").innerHTML = `
-        <div><b>method:</b> ${method}</div>
-        <div><b>card:</b> <pre>${card}</pre></div>
-        <div><b>transfers:</b> <pre>${transfer}</pre></div>
-        <pre>${JSON.stringify(data, null, 4)}</pre>
-      `;
+      // 응답 값은 HTML 로 해석되지 않게 textContent 로 넣어요.
+      const response = document.getElementById("response");
+      response.replaceChildren();
+      [["method", method], ["card", card], ["transfers", transfer]].forEach(function ([label, value]) {
+        const row = document.createElement("div");
+        const title = document.createElement("b");
+        title.textContent = `${label}:`;
+        const content = document.createElement("pre");
+        content.textContent = value;
+        row.append(title, " ", content);
+        response.append(row);
+      });
+      const raw = document.createElement("pre");
+      raw.textContent = JSON.stringify(data, null, 4);
+      response.append(raw);
     }
 </script>
 </body>

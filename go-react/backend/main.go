@@ -83,13 +83,15 @@ func main() {
 		// 	return
 		// }
 
-		response, err := confirmPayment(encryptedWidgetSecretKey, request)
+		status, response, err := confirmPayment(encryptedWidgetSecretKey, request)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, response)
+		// 가상계좌 웹훅 검증에 쓰는 secret 은 서버에만 저장하고 브라우저로 보내지 마세요.
+		delete(response, "secret")
+		c.JSON(status, response)
 	})
 
 	// 결제창 승인
@@ -109,13 +111,15 @@ func main() {
 		// 	return
 		// }
 
-		response, err := confirmPayment(encryptedApiSecretKey, request)
+		status, response, err := confirmPayment(encryptedApiSecretKey, request)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, response)
+		// 가상계좌 웹훅 검증에 쓰는 secret 은 서버에만 저장하고 브라우저로 보내지 마세요.
+		delete(response, "secret")
+		c.JSON(status, response)
 	})
 
 	// 브랜드페이 승인
@@ -137,13 +141,15 @@ func main() {
 		// 	return
 		// }
 
-		response, err := confirmBrandPay(encryptedApiSecretKey, request)
+		status, response, err := confirmBrandPay(encryptedApiSecretKey, request)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, response)
+		// 가상계좌 웹훅 검증에 쓰는 secret 은 서버에만 저장하고 브라우저로 보내지 마세요.
+		delete(response, "secret")
+		c.JSON(status, response)
 	})
 
 	// 빌링키 발급
@@ -156,18 +162,18 @@ func main() {
 
 		// TODO: 요청으로 받은 customerKey 가 로그인한 구매자의 것인지 확인하세요.
 
-		response, err := issueBillingKey(encryptedApiSecretKey, request)
+		status, response, err := issueBillingKey(encryptedApiSecretKey, request)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
 		// TODO: 발급된 빌링키를 구매자 정보로 찾을 수 있도록 저장해두고, 결제가 필요한 시점에 조회하여 자동결제 승인 API 를 호출합니다.
-		if billingKey, ok := response["billingKey"].(string); ok {
+		if billingKey, ok := response["billingKey"].(string); ok && status == http.StatusOK {
 			billingKeyMap.Store(request.CustomerKey, billingKey)
 		}
 
-		c.JSON(http.StatusOK, response)
+		c.JSON(status, response)
 	})
 
 	// 카드 자동결제 승인
@@ -202,13 +208,15 @@ func main() {
 			CustomerName:  "김토스",
 		}
 
-		response, err := confirmBillingPayment(encryptedApiSecretKey, billingKey.(string), request)
+		status, response, err := confirmBillingPayment(encryptedApiSecretKey, billingKey.(string), request)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, response)
+		// 가상계좌 웹훅 검증에 쓰는 secret 은 서버에만 저장하고 브라우저로 보내지 마세요.
+		delete(response, "secret")
+		c.JSON(status, response)
 	})
 
 	port := os.Getenv("PORT")
@@ -221,47 +229,59 @@ func main() {
 }
 
 // 결제 승인 요청
-func confirmPayment(authKey string, request PaymentRequest) (map[string]interface{}, error) {
+func confirmPayment(authKey string, request PaymentRequest) (int, map[string]interface{}, error) {
 	url := "https://api.tosspayments.com/v1/payments/confirm"
 	return postRequest(authKey, url, request)
 }
 
 // 브랜드페이 승인 요청
-func confirmBrandPay(authKey string, request BrandPayRequest) (map[string]interface{}, error) {
+func confirmBrandPay(authKey string, request BrandPayRequest) (int, map[string]interface{}, error) {
 	url := "https://api.tosspayments.com/v1/brandpay/payments/confirm"
 	return postRequest(authKey, url, request)
 }
 
 // 빌링키 발급
-func issueBillingKey(authKey string, request BillingKeyRequest) (map[string]interface{}, error) {
+func issueBillingKey(authKey string, request BillingKeyRequest) (int, map[string]interface{}, error) {
 	url := "https://api.tosspayments.com/v1/billing/authorizations/issue"
 	return postRequest(authKey, url, request)
 }
 
 // 카드 자동결제 승인
-func confirmBillingPayment(authKey string, billingKey string, request BillingPaymentRequest) (map[string]interface{}, error) {
+func confirmBillingPayment(authKey string, billingKey string, request BillingPaymentRequest) (int, map[string]interface{}, error) {
 	url := fmt.Sprintf("https://api.tosspayments.com/v1/billing/%s", billingKey)
 	return postRequest(authKey, url, request)
 }
 
 // 공통 API 요청 함수
-func postRequest(authKey string, url string, data interface{}) (map[string]interface{}, error) {
-	jsonData, _ := json.Marshal(data)
+func postRequest(authKey string, url string, data interface{}) (int, map[string]interface{}, error) {
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return 0, nil, err
+	}
 
-	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return 0, nil, err
+	}
 	req.Header.Set("Authorization", authKey)
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
 	defer resp.Body.Close()
 
-	body, _ := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, nil, err
+	}
 	var result map[string]interface{}
-	json.Unmarshal(body, &result)
+	if err := json.Unmarshal(body, &result); err != nil {
+		return 0, nil, err
+	}
 
-	return result, nil
+	// 토스페이먼츠 응답 상태 코드를 그대로 돌려줘서, 승인 실패를 성공으로 처리하지 않게 해요.
+	return resp.StatusCode, result, nil
 }

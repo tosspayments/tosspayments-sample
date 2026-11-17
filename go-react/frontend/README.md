@@ -66,8 +66,8 @@ $ v18.18.2
 
 - **시크릿 키**
 
-  - **결제위젯**: `server/config.go` 파일에 있는 `WidgetSecretKey`를 내 결제위젯 시크릿 키로 수정하세요.
-  - **결제창 및 브랜드페이**: `server/config.go` 파일에 있는 `ApiSecretKey`를 내 API 개별 연동 시크릿 키로 수정하세요.
+  - **결제위젯**: `backend/.env` 파일의 `WIDGET_SECRET_KEY` 에 내 결제위젯 시크릿 키를 넣으세요.
+  - **결제창 및 브랜드페이**: `backend/.env` 파일의 `API_SECRET_KEY` 에 내 API 개별 연동 시크릿 키를 넣으세요.
 
   \* 시크릿 키는 외부에 절대 노출되면 안 됩니다.
 

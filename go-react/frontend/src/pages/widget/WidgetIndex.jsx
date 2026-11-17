@@ -19,7 +19,7 @@ export function WidgetIndexPage() {
       const tossPayments = await loadTossPayments(clientKey);
 
       // 결제위젯 (주문서형)
-      // TODO: 구매자의 고유 아이디를 불러와서 customerKey로 설정하세요. 이메일・전화번호와 같이 유추가 가능한 값은 안전하지 않습니다.
+      // TODO: 로그인한 구매자를 기준으로 서버에서 정한 고유 아이디를 불러와서 customerKey로 설정하세요. 이메일, 전화번호와 같이 유추가 가능한 값은 안전하지 않습니다.
       // @docs https://docs.tosspayments.com/sdk/v2/js#tosspaymentswidgets
       const w = tossPayments.widgets({ customerKey: generateRandomString() });
       // 비회원 결제
@@ -210,5 +210,5 @@ export function WidgetIndexPage() {
 }
 
 function generateRandomString() {
-  return window.btoa(Math.random().toString()).slice(0, 20);
+  return window.crypto.randomUUID();
 }

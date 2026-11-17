@@ -25,8 +25,8 @@ code	= trim(request("code"))
 <body>
 <section>
     <h1>결제 실패</h1>
-    <p><%=message%></p>
-    <span>에러코드: <%=code%></span>
+    <p><%=Server.HTMLEncode(message)%></p>
+    <span>에러코드: <%=Server.HTMLEncode(code)%></span>
 </section>
 </body>
 </html>

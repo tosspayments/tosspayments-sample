@@ -7,14 +7,27 @@ app.use(express.json());
 
 // TODO: 개발자센터에 로그인해서 내 결제위젯 연동 키 > 시크릿 키를 입력하세요. 시크릿 키는 외부에 공개되면 안돼요.
 // @docs https://docs.tosspayments.com/reference/using-api/api-keys
-const widgetSecretKey = "{WIDGET_SECRET_KEY}";
-const apiSecretKey = "{SECRET_KEY}";
+const widgetSecretKey = process.env.WIDGET_SECRET_KEY ?? "{WIDGET_SECRET_KEY}";
+const apiSecretKey = process.env.API_SECRET_KEY ?? "{SECRET_KEY}";
 
 // 토스페이먼츠 API는 시크릿 키를 사용자 ID로 사용하고, 비밀번호는 사용하지 않습니다.
 // 비밀번호가 없다는 것을 알리기 위해 시크릿 키 뒤에 콜론을 추가합니다.
 // @docs https://docs.tosspayments.com/reference/using-api/authorization#%EC%9D%B8%EC%A6%9D
 const encryptedWidgetSecretKey = "Basic " + Buffer.from(widgetSecretKey + ":").toString("base64");
 const encryptedApiSecretKey = "Basic " + Buffer.from(apiSecretKey + ":").toString("base64");
+
+// 브라우저에는 화면에 필요한 값만 보내세요.
+// 가상계좌 웹훅 검증에 쓰는 secret 은 서버에만 저장하고 브라우저로 보내지 마세요.
+function omitSecret(payment) {
+  const { secret, ...rest } = payment;
+  return rest;
+}
+
+// 브랜드페이 Access Token, Refresh Token 은 서버에만 저장하고 브라우저로 보내지 마세요.
+function omitTokens(token) {
+  const { accessToken, refreshToken, ...rest } = token;
+  return rest;
+}
 
 // 결제위젯 승인
 app.post("/confirm/widget", function (req, res) {
@@ -45,7 +58,7 @@ app.post("/confirm/widget", function (req, res) {
     }),
   }).then(async function (response) {
     const result = await response.json();
-    console.log(result);
+    console.log({ orderId: result.orderId, status: result.status });
 
     if (!response.ok) {
       // TODO: 결제 승인 실패 비즈니스 로직을 구현하세요.
@@ -55,7 +68,7 @@ app.post("/confirm/widget", function (req, res) {
     }
 
     // TODO: 결제 완료 비즈니스 로직을 구현하세요.
-    res.status(response.status).json(result);
+    res.status(response.status).json(omitSecret(result));
   });
 });
 
@@ -88,7 +101,7 @@ app.post("/confirm/payment", function (req, res) {
     }),
   }).then(async function (response) {
     const result = await response.json();
-    console.log(result);
+    console.log({ orderId: result.orderId, status: result.status });
 
     if (!response.ok) {
       // TODO: 결제 승인 실패 비즈니스 로직을 구현하세요.
@@ -98,7 +111,7 @@ app.post("/confirm/payment", function (req, res) {
     }
 
     // TODO: 결제 완료 비즈니스 로직을 구현하세요.
-    res.status(response.status).json(result);
+    res.status(response.status).json(omitSecret(result));
   });
 });
 
@@ -134,7 +147,7 @@ app.post("/confirm/brandpay", function (req, res) {
     }),
   }).then(async function (response) {
     const result = await response.json();
-    console.log(result);
+    console.log({ orderId: result.orderId, status: result.status });
 
     if (!response.ok) {
       // TODO: 결제 승인 실패 비즈니스 로직을 구현하세요.
@@ -144,7 +157,7 @@ app.post("/confirm/brandpay", function (req, res) {
     }
 
     // TODO: 결제 완료 비즈니스 로직을 구현하세요.
-    res.status(response.status).json(result);
+    res.status(response.status).json(omitSecret(result));
   });
 });
 
@@ -167,7 +180,6 @@ app.get("/callback-auth", function (req, res) {
     }),
   }).then(async function (response) {
     const result = await response.json();
-    console.log(result);
 
     if (!response.ok) {
       // TODO: 발급 실패 비즈니스 로직을 구현하세요.
@@ -177,7 +189,7 @@ app.get("/callback-auth", function (req, res) {
     }
 
     // TODO: 발급 성공 비즈니스 로직을 구현하세요.
-    res.status(response.status).json(result);
+    res.status(response.status).json(omitTokens(result));
   });
 });
 
@@ -203,7 +215,6 @@ app.post("/issue-billing-key", function (req, res) {
     }),
   }).then(async function (response) {
     const result = await response.json();
-    console.log(result);
 
     if (!response.ok) {
       // TODO: 빌링키 발급 실패 비즈니스 로직을 구현하세요.
@@ -258,7 +269,7 @@ app.post("/confirm-billing", function (req, res) {
     }),
   }).then(async function (response) {
     const result = await response.json();
-    console.log(result);
+    console.log({ orderId: result.orderId, status: result.status });
 
     if (!response.ok) {
       // TODO: 자동결제 승인 실패 비즈니스 로직을 구현하세요.
@@ -268,7 +279,7 @@ app.post("/confirm-billing", function (req, res) {
     }
 
     // TODO: 자동결제 승인 성공 비즈니스 로직을 구현하세요.
-    res.status(response.status).json(result);
+    res.status(response.status).json(omitSecret(result));
   });
 });
 
