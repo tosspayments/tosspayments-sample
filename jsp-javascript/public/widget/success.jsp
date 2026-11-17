@@ -16,7 +16,7 @@
 <%
     // ------ 결제 승인 API 호출 ------
     // 개발자센터 시크릿 키 설정
-    String secretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6:";
+    String secretKey = "{WIDGET_SECRET_KEY}:";
     Encoder encoder = Base64.getEncoder();
     byte[] encodedBytes = encoder.encode(secretKey.getBytes("UTF-8"));
     String authorizations = "Basic " + new String(encodedBytes, 0, encodedBytes.length);
@@ -25,6 +25,15 @@
     String orderId = request.getParameter("orderId");
     String paymentKey = request.getParameter("paymentKey");
     String amount = request.getParameter("amount");
+
+    // TODO: 결제를 요청하기 전에 서버에 저장한 orderId, amount 와 요청으로 받은 값이 같은지 확인하세요.
+    // 값이 다르면 결제 승인 API 를 호출하지 말고 실패로 응답하세요.
+    // 예시)
+    // Long savedAmount = findSavedAmount(orderId); // 결제를 요청하기 전에 저장한 주문 금액
+    // if (savedAmount == null || savedAmount != Long.parseLong(amount)) {
+    //     response.sendRedirect("fail.jsp?code=INVALID_AMOUNT&message=" + URLEncoder.encode("주문 금액이 일치하지 않아요.", "UTF-8"));
+    //     return;
+    // }
 
     paymentKey = URLEncoder.encode(paymentKey, "UTF-8");
 

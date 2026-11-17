@@ -11,7 +11,15 @@ call initCodecs
 paymentKey = trim(request("paymentKey"))
 orderId = trim(request("orderId"))
 amount = trim(request("amount"))
-secretkey = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R:"
+
+' TODO: 결제를 요청하기 전에 서버에 저장한 orderId, amount 와 요청으로 받은 값이 같은지 확인하세요.
+' 값이 다르면 결제 승인 API 를 호출하지 말고 실패로 응답하세요.
+' 예시)
+' savedAmount = FindSavedAmount(orderId) ' 결제를 요청하기 전에 저장한 주문 금액
+' If IsEmpty(savedAmount) Or CStr(savedAmount) <> amount Then
+'     Response.Redirect "fail.asp?code=INVALID_AMOUNT&message=" & Server.URLEncode("주문 금액이 일치하지 않아요.")
+' End If
+secretkey = "{SECRET_KEY}:"
 url = "https://api.tosspayments.com/v1/payments/confirm"
 
 data = "{""paymentKey"" : """ & paymentKey & """, ""orderId"" : """ & orderId & """, ""amount"" : """ & amount & """}"

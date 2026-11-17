@@ -9,6 +9,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sync"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -38,7 +40,7 @@ type BillingKeyRequest struct {
 // 카드 자동결제 요청
 type BillingPaymentRequest struct {
 	CustomerKey   string `json:"customerKey"`
-	Amount        string `json:"amount"`
+	Amount        int    `json:"amount"`
 	OrderId       string `json:"orderId"`
 	OrderName     string `json:"orderName"`
 	CustomerEmail string `json:"customerEmail"`
@@ -58,6 +60,9 @@ func main() {
 	encryptedWidgetSecretKey := "Basic " + base64.StdEncoding.EncodeToString([]byte(widgetSecretKey+":"))
 	encryptedApiSecretKey := "Basic " + base64.StdEncoding.EncodeToString([]byte(apiSecretKey+":"))
 
+	// 빌링키 저장소 (샘플이라 메모리에 저장해요)
+	var billingKeyMap sync.Map
+
 	r := gin.Default()
 	r.Use(gin.Logger())
 
@@ -68,6 +73,15 @@ func main() {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
+
+		// TODO: 결제를 요청하기 전에 서버에 저장한 orderId, amount 와 요청으로 받은 값이 같은지 확인하세요.
+		// 값이 다르면 결제 승인 API 를 호출하지 말고 실패로 응답하세요.
+		// 예시)
+		// savedOrder, ok := findSavedOrder(request.OrderId) // 결제를 요청하기 전에 저장한 주문 정보
+		// if !ok || savedOrder.Amount != request.Amount {
+		// 	c.JSON(http.StatusBadRequest, gin.H{"code": "INVALID_AMOUNT", "message": "주문 금액이 일치하지 않아요."})
+		// 	return
+		// }
 
 		response, err := confirmPayment(encryptedWidgetSecretKey, request)
 		if err != nil {
@@ -86,6 +100,15 @@ func main() {
 			return
 		}
 
+		// TODO: 결제를 요청하기 전에 서버에 저장한 orderId, amount 와 요청으로 받은 값이 같은지 확인하세요.
+		// 값이 다르면 결제 승인 API 를 호출하지 말고 실패로 응답하세요.
+		// 예시)
+		// savedOrder, ok := findSavedOrder(request.OrderId) // 결제를 요청하기 전에 저장한 주문 정보
+		// if !ok || savedOrder.Amount != request.Amount {
+		// 	c.JSON(http.StatusBadRequest, gin.H{"code": "INVALID_AMOUNT", "message": "주문 금액이 일치하지 않아요."})
+		// 	return
+		// }
+
 		response, err := confirmPayment(encryptedApiSecretKey, request)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -102,6 +125,17 @@ func main() {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
+
+		// TODO: 요청으로 받은 customerKey 가 로그인한 구매자의 것인지 확인하세요.
+
+		// TODO: 결제를 요청하기 전에 서버에 저장한 orderId, amount 와 요청으로 받은 값이 같은지 확인하세요.
+		// 값이 다르면 결제 승인 API 를 호출하지 말고 실패로 응답하세요.
+		// 예시)
+		// savedOrder, ok := findSavedOrder(request.OrderId) // 결제를 요청하기 전에 저장한 주문 정보
+		// if !ok || savedOrder.Amount != request.Amount {
+		// 	c.JSON(http.StatusBadRequest, gin.H{"code": "INVALID_AMOUNT", "message": "주문 금액이 일치하지 않아요."})
+		// 	return
+		// }
 
 		response, err := confirmBrandPay(encryptedApiSecretKey, request)
 		if err != nil {
@@ -120,24 +154,55 @@ func main() {
 			return
 		}
 
+		// TODO: 요청으로 받은 customerKey 가 로그인한 구매자의 것인지 확인하세요.
+
 		response, err := issueBillingKey(encryptedApiSecretKey, request)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
+		// TODO: 발급된 빌링키를 구매자 정보로 찾을 수 있도록 저장해두고, 결제가 필요한 시점에 조회하여 자동결제 승인 API 를 호출합니다.
+		if billingKey, ok := response["billingKey"].(string); ok {
+			billingKeyMap.Store(request.CustomerKey, billingKey)
+		}
+
 		c.JSON(http.StatusOK, response)
 	})
 
 	// 카드 자동결제 승인
+	// 샘플에서 자동결제 승인 결과를 바로 확인할 수 있도록 만든 데모용 API 예요.
+	// 실제 서비스에서는 이 API 를 브라우저에 열지 마세요. 결제 대상 구매자와 금액은 서버가 정해요.
+	// 서버에 저장한 빌링키와 customerKey 로, 서버의 스케줄러가 결제 주기에 맞춰 자동결제 승인 API 를 호출하세요.
+	// @docs https://docs.tosspayments.com/guides/v2/billing/integration
 	r.POST("/confirm-billing", func(c *gin.Context) {
-		var request BillingPaymentRequest
-		if err := c.ShouldBindJSON(&request); err != nil {
+		// TODO: customerKey 는 요청값 대신 로그인한 구매자 정보로 정하세요.
+		var body struct {
+			CustomerKey string `json:"customerKey"`
+		}
+		if err := c.ShouldBindJSON(&body); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
-		response, err := confirmBillingPayment(encryptedApiSecretKey, request)
+		// 저장해두었던 빌링키로 자동결제 승인 API 를 호출하세요.
+		billingKey, ok := billingKeyMap.Load(body.CustomerKey)
+		if !ok {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Billing key not found"})
+			return
+		}
+
+		// 결제 금액, 주문번호, 주문명, 구매자 정보는 브라우저에서 받지 말고 서버에서 정하세요.
+		request := BillingPaymentRequest{
+			CustomerKey:   body.CustomerKey,
+			Amount:        4900,
+			OrderId:       fmt.Sprintf("billing-%d", time.Now().UnixMilli()),
+			OrderName:     "토스 프라임 구독",
+			CustomerEmail: "customer123@gmail.com",
+			CustomerName:  "김토스",
+		}
+
+		response, err := confirmBillingPayment(encryptedApiSecretKey, billingKey.(string), request)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -174,8 +239,8 @@ func issueBillingKey(authKey string, request BillingKeyRequest) (map[string]inte
 }
 
 // 카드 자동결제 승인
-func confirmBillingPayment(authKey string, request BillingPaymentRequest) (map[string]interface{}, error) {
-	url := fmt.Sprintf("https://api.tosspayments.com/v1/billing/%s", request.CustomerKey)
+func confirmBillingPayment(authKey string, billingKey string, request BillingPaymentRequest) (map[string]interface{}, error) {
+	url := fmt.Sprintf("https://api.tosspayments.com/v1/billing/%s", billingKey)
 	return postRequest(authKey, url, request)
 }
 

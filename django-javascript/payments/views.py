@@ -1,5 +1,5 @@
 from django.shortcuts import render
-import requests, json, base64
+import requests, json, base64, time
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -60,13 +60,13 @@ def paymentBilling(request):
 # TODO: 개발자센터에 로그인해서 내 시크릿 키를 입력하세요. 시크릿 키는 외부에 공개되면 안돼요.
 # @docs https://docs.tosspayments.com/reference/using-api/api-keys
 def widgetSuccess(request):
-    return process_payment(request, "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6", './widget/success.html')
+    return process_payment(request, "{WIDGET_SECRET_KEY}", './widget/success.html')
 
 def paymentSuccess(request):
-    return process_payment(request, "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R", './payment/success.html')
+    return process_payment(request, "{SECRET_KEY}", './payment/success.html')
 
 def brandpaySuccess(request):
-    return process_payment(request, "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R", './brandpay/success.html')
+    return process_payment(request, "{SECRET_KEY}", './brandpay/success.html')
 
 # 결제 승인 호출하는 함수
 # @docs https://docs.tosspayments.com/guides/v2/payment-widget/integration#3-결제-승인하기
@@ -74,6 +74,13 @@ def process_payment(request, secret_key, success_template):
     orderId = request.GET.get('orderId')
     amount = request.GET.get('amount')
     paymentKey = request.GET.get('paymentKey')
+
+    # TODO: 결제를 요청하기 전에 서버에 저장한 orderId, amount 와 요청으로 받은 값이 같은지 확인하세요.
+    # 값이 다르면 결제 승인 API 를 호출하지 말고 실패로 응답하세요.
+    # 예시)
+    # saved_order = find_saved_order(orderId)  # 결제를 요청하기 전에 저장한 주문 정보
+    # if saved_order is None or saved_order['amount'] != int(amount):
+    #     return render(request, 'fail.html', {"code": "INVALID_AMOUNT", "message": "주문 금액이 일치하지 않아요."})
 
     url = "https://api.tosspayments.com/v1/payments/confirm"
     headers = create_headers(secret_key)
@@ -105,11 +112,13 @@ def issueBillingKey(request):
 
         if not customerKey or not authKey:
             raise ValueError("Missing parameters")
+
+        # TODO: 요청으로 받은 customerKey 가 로그인한 구매자의 것인지 확인하세요.
     except (json.JSONDecodeError, ValueError) as e:
         return JsonResponse({'error': str(e)}, status=400)
 
     url = "https://api.tosspayments.com/v1/billing/authorizations/issue"
-    secret_key = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R"
+    secret_key = "{SECRET_KEY}"
     headers = create_headers(secret_key)
     params = {
         "customerKey": customerKey,
@@ -124,30 +133,37 @@ def issueBillingKey(request):
     return JsonResponse(resjson, status=status_code)
 
 # 자동결제 승인
+# 샘플에서 자동결제 승인 결과를 바로 확인할 수 있도록 만든 데모용 API 예요.
+# 실제 서비스에서는 이 API 를 브라우저에 열지 마세요. 결제 대상 구매자와 금액은 서버가 정해요.
+# 서버에 저장한 빌링키와 customerKey 로, 서버의 스케줄러가 결제 주기에 맞춰 자동결제 승인 API 를 호출하세요.
+# @docs https://docs.tosspayments.com/guides/v2/billing/integration
 @csrf_exempt
 def confirm_billing(request):
     try:
         data = json.loads(request.body)
+        # TODO: customerKey 는 요청값 대신 로그인한 구매자 정보로 정하세요.
         customerKey = data.get('customerKey')
-        amount = data.get('amount')
-        orderId = data.get('orderId')
-        orderName = data.get('orderName')
-        customerEmail = data.get('customerEmail')
-        customerName = data.get('customerName')
 
-        if not all([customerKey, amount, orderId, orderName, customerEmail, customerName]):
+        if not customerKey:
             raise ValueError("Missing parameters")
 
         # 저장해두었던 빌링키로 자동결제 승인 API 를 호출하세요.
         billingKey = billing_key_map.get(customerKey)
         if not billingKey:
-            return JsonResponse({'error': 'Billing key not found'}, status=400)
+            return JsonResponse({'error': 'Billing key not found'}, status=404)
         
     except (json.JSONDecodeError, ValueError) as e:
         return JsonResponse({'error': str(e)}, status=400)
 
+    # 결제 금액, 주문번호, 주문명, 구매자 정보는 브라우저에서 받지 말고 서버에서 정하세요.
+    amount = 4900
+    orderId = f"billing-{int(time.time() * 1000)}"
+    orderName = "토스 프라임 구독"
+    customerEmail = "customer123@gmail.com"
+    customerName = "김토스"
+
     url = f"https://api.tosspayments.com/v1/billing/{billingKey}"
-    secret_key = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R"
+    secret_key = "{SECRET_KEY}"
     headers = create_headers(secret_key)
     params = {
         "customerKey": customerKey,
@@ -173,8 +189,10 @@ def callback_auth(request):
     if not customerKey or not code:
         return JsonResponse({'error': 'Missing parameters'}, status=400)
 
+    # TODO: 요청으로 받은 customerKey 가 로그인한 구매자의 것인지 확인하세요.
+
     url = "https://api.tosspayments.com/v1/brandpay/authorizations/access-token"
-    secret_key = "test_sk_aBX7zk2yd8yoXwoJ0gqVx9POLqKQ"
+    secret_key = "{SECRET_KEY}"
     headers = create_headers(secret_key)
     params = {
         "grantType": "AuthorizationCode",

@@ -9,6 +9,7 @@
 call initCodecs
 
 customerKey = trim(request("customerKey"))
+' TODO: 요청으로 받은 customerKey 가 로그인한 구매자의 것인지 확인하세요.
 authKey = trim(request("authKey"))
 billingMethod = trim(request("billingMethod"))
 if billingMethod = "" then
@@ -19,7 +20,7 @@ if billingMethod = "TRANSFER" then
 else
     billingMethodLabel = "카드 자동결제"
 end if
-secretKey = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R:"
+secretKey = "{SECRET_KEY}:"
 url = "https://api.tosspayments.com/v1/billing/authorizations/issue"
 
 data = "{""authKey"" : """ & authKey & """, ""customerKey"" : """ & customerKey & """}"

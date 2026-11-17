@@ -46,17 +46,12 @@ export function PaymentBillingPage() {
       });
   }, []);
 
-  // 일반적으로 정기결제는 특정 시점에 배치를 통해 구현하지만,
-  // 이해를 돕기 위해 클라이언트에서 강제로 실행해볼 수 있도록 샘플 API 가 구현되어 있습니다.
+  // 이해를 돕기 위해 브라우저에서 자동결제 승인을 실행해볼 수 있도록 만든 데모 버튼이에요.
+  // 실제 서비스에서는 브라우저에서 자동결제 승인을 요청하지 말고, 서버의 스케줄러에서 실행하세요.
   async function confirm() {
     async function confirmBilling() {
       const requestData = {
         customerKey: searchParams.get("customerKey"),
-        amount: 4900,
-        orderId: generateRandomString(),
-        orderName: "토스 프라임 구독",
-        customerEmail: "customer123@gmail.com",
-        customerName: "김토스",
       };
 
       const response = await fetch("/api/confirm-billing", {
@@ -141,8 +136,4 @@ export function PaymentBillingPage() {
       </div>
     </div>
   );
-}
-
-function generateRandomString() {
-  return window.btoa(Math.random().toString()).slice(0, 20);
 }

@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> <%@ page import="java.util.Base64"%> <%@ page import="java.util.Base64.Encoder"%> <%@ page
 import="java.net.HttpURLConnection"%> <%@ page import="java.net.URL" %> <%@ page import="org.json.simple.JSONObject" %> <%@ page import="org.json.simple.parser.JSONParser" %> <%@ page
 import="org.json.simple.parser.ParseException" %> <%@ page import="java.io.OutputStream" %> <%@ page import="java.io.InputStream" %> <%@ page import="java.io.InputStreamReader" %> <%@ page
-import="java.io.Reader" %> <%@ page import="java.nio.charset.StandardCharsets" %> <%@ page import="java.net.URLEncoder" %> <% // 결제 승인 API 호출하기 String orderId =
-request.getParameter("orderId"); String paymentKey = request.getParameter("paymentKey"); String amount = request.getParameter("amount"); String secretKey = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R:";
+import="java.io.Reader" %> <%@ page import="java.nio.charset.StandardCharsets" %> <%@ page import="java.net.URLEncoder" %> <% /* 결제 승인 API 호출하기 */ String orderId =
+request.getParameter("orderId"); String paymentKey = request.getParameter("paymentKey"); String amount = request.getParameter("amount"); /* TODO: 결제를 요청하기 전에 서버에 저장한 orderId, amount 와 요청으로 받은 값이 같은지 확인하세요. 값이 다르면 결제 승인 API 를 호출하지 말고 실패로 응답하세요. 예시) Long savedAmount = findSavedAmount(orderId); if (savedAmount == null || savedAmount != Long.parseLong(amount)) { response.sendRedirect("fail.jsp?code=INVALID_AMOUNT"); return; } */ String secretKey = "{SECRET_KEY}:";
 Encoder encoder = Base64.getEncoder(); byte[] encodedBytes = encoder.encode(secretKey.getBytes("UTF-8")); String authorizations = "Basic "+ new String(encodedBytes, 0, encodedBytes.length); paymentKey
 = URLEncoder.encode(paymentKey, StandardCharsets.UTF_8); URL url = new URL("https://api.tosspayments.com/v1/payments/confirm"); HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 connection.setRequestProperty("Authorization", authorizations); connection.setRequestProperty("Content-Type", "application/json"); connection.setRequestMethod("POST"); connection.setDoOutput(true);

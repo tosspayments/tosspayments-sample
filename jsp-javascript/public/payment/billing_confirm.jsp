@@ -16,13 +16,14 @@
 <%
     // 결제 승인 API 호출하기
     String customerKey = request.getParameter("customerKey");
+    // TODO: 요청으로 받은 customerKey 가 로그인한 구매자의 것인지 확인하세요.
     String authKey = request.getParameter("authKey");
     String billingMethod = request.getParameter("billingMethod");
     if (billingMethod == null || billingMethod.isEmpty()) {
         billingMethod = "CARD";
     }
     String billingMethodLabel = "CARD".equals(billingMethod) ? "카드 자동결제" : "계좌 자동결제";
-    String secretKey = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R:";
+    String secretKey = "{SECRET_KEY}:";
 
     Encoder encoder = Base64.getEncoder();
     byte[] encodedBytes = encoder.encode(secretKey.getBytes("UTF-8"));
