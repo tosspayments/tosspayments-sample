@@ -13,10 +13,24 @@
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.util.Set" %>
 
+<%!
+    // 화면에 출력하는 값은 HTML 로 해석되지 않게 바꿔서 출력하세요.
+    private static String escapeHtml(Object value) {
+        if (value == null) {
+            return "";
+        }
+        return String.valueOf(value)
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
+    }
+%>
 <%
     // ------ 결제 승인 API 호출 ------
     // 개발자센터 시크릿 키 설정
-    String secretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6:";
+    /* TODO: 시크릿 키는 소스에 적지 말고 환경 변수나 웹 루트 밖 설정에서 읽으세요. */ String secretKey = (System.getenv("WIDGET_SECRET_KEY") != null ? System.getenv("WIDGET_SECRET_KEY") : "{WIDGET_SECRET_KEY}") + ":";
     Encoder encoder = Base64.getEncoder();
     byte[] encodedBytes = encoder.encode(secretKey.getBytes("UTF-8"));
     String authorizations = "Basic " + new String(encodedBytes, 0, encodedBytes.length);
@@ -25,6 +39,15 @@
     String orderId = request.getParameter("orderId");
     String paymentKey = request.getParameter("paymentKey");
     String amount = request.getParameter("amount");
+
+    // TODO: 결제를 요청하기 전에 서버에 저장한 orderId, amount 와 요청으로 받은 값이 같은지 확인하세요.
+    // 값이 다르면 결제 승인 API 를 호출하지 말고 실패로 응답하세요.
+    // 예시)
+    // Long savedAmount = findSavedAmount(orderId); // 결제를 요청하기 전에 저장한 주문 금액
+    // if (savedAmount == null || savedAmount != Long.parseLong(amount)) {
+    //     response.sendRedirect("fail.jsp?code=INVALID_AMOUNT&message=" + URLEncoder.encode("주문 금액이 일치하지 않아요.", "UTF-8"));
+    //     return;
+    // }
 
     paymentKey = URLEncoder.encode(paymentKey, "UTF-8");
 
@@ -77,15 +100,15 @@
 
                 <div class="p-grid typography--p" style="margin-top: 50px">
                     <div class="p-grid-col text--left"><b>결제금액</b></div>
-                    <div class="p-grid-col text--right" id="amount"><%= jsonObject.get("totalAmount") %></div>
+                    <div class="p-grid-col text--right" id="amount"><%= escapeHtml(jsonObject.get("totalAmount")) %></div>
                 </div>
                 <div class="p-grid typography--p" style="margin-top: 10px">
                     <div class="p-grid-col text--left"><b>주문번호</b></div>
-                    <div class="p-grid-col text--right" id="orderId"><%= jsonObject.get("orderId") %></div>
+                    <div class="p-grid-col text--right" id="orderId"><%= escapeHtml(jsonObject.get("orderId")) %></div>
                 </div>
                 <div class="p-grid typography--p" style="margin-top: 10px">
                     <div class="p-grid-col text--left"><b>paymentKey</b></div>
-                    <div class="p-grid-col text--right" id="paymentKey" style="white-space: initial; width: 250px"><%= jsonObject.get("paymentKey") %></div>
+                    <div class="p-grid-col text--right" id="paymentKey" style="white-space: initial; width: 250px"><%= escapeHtml(jsonObject.get("paymentKey")) %></div>
                 </div>
                 <div class="p-grid" style="margin-top: 30px">
                     <button class="button p-grid-col5" onclick="location.href='https://docs.tosspayments.com/guides/payment/integration';">연동 문서</button>
@@ -100,8 +123,12 @@
                         <%
                             Set<String> keys = jsonObject.keySet();
                             for (String key : keys) {
+                                // 가상계좌 웹훅 검증에 쓰는 secret 은 화면에 출력하지 마세요.
+                                if ("secret".equals(key)) {
+                                    continue;
+                                }
                         %>
-                        <%= key %>: <%= jsonObject.get(key) %>
+                        <%= escapeHtml(key) %>: <%= escapeHtml(jsonObject.get(key)) %>
                         <%
                             }
                         %>
@@ -115,11 +142,11 @@
 
                 <div class="p-grid typography--p" style="margin-top: 50px">
                     <div class="p-grid-col text--left"><b>에러메시지</b></div>
-                    <div class="p-grid-col text--right" id="message"><%= jsonObject.get("message") %></div>
+                    <div class="p-grid-col text--right" id="message"><%= escapeHtml(jsonObject.get("message")) %></div>
                 </div>
                 <div class="p-grid typography--p" style="margin-top: 10px">
                     <div class="p-grid-col text--left"><b>에러코드</b></div>
-                    <div class="p-grid-col text--right" id="code"><%= jsonObject.get("code") %></div>
+                    <div class="p-grid-col text--right" id="code"><%= escapeHtml(jsonObject.get("code")) %></div>
                 </div>
 
                 <div class="p-grid">

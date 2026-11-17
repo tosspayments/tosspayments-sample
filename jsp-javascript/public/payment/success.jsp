@@ -1,8 +1,22 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> <%@ page import="java.util.Base64"%> <%@ page import="java.util.Base64.Encoder"%> <%@ page
 import="java.net.HttpURLConnection"%> <%@ page import="java.net.URL" %> <%@ page import="org.json.simple.JSONObject" %> <%@ page import="org.json.simple.parser.JSONParser" %> <%@ page
 import="org.json.simple.parser.ParseException" %> <%@ page import="java.io.OutputStream" %> <%@ page import="java.io.InputStream" %> <%@ page import="java.io.InputStreamReader" %> <%@ page
-import="java.io.Reader" %> <%@ page import="java.nio.charset.StandardCharsets" %> <%@ page import="java.net.URLEncoder" %> <% // 결제 승인 API 호출하기 String orderId =
-request.getParameter("orderId"); String paymentKey = request.getParameter("paymentKey"); String amount = request.getParameter("amount"); String secretKey = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R:";
+import="java.io.Reader" %> <%@ page import="java.nio.charset.StandardCharsets" %> <%@ page import="java.net.URLEncoder" %> <%!
+    // 화면에 출력하는 값은 HTML 로 해석되지 않게 바꿔서 출력하세요.
+    private static String escapeHtml(Object value) {
+        if (value == null) {
+            return "";
+        }
+        return String.valueOf(value)
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
+    }
+%>
+<% /* 결제 승인 API 호출하기 */ String orderId =
+request.getParameter("orderId"); String paymentKey = request.getParameter("paymentKey"); String amount = request.getParameter("amount"); /* TODO: 결제를 요청하기 전에 서버에 저장한 orderId, amount 와 요청으로 받은 값이 같은지 확인하세요. 값이 다르면 결제 승인 API 를 호출하지 말고 실패로 응답하세요. 예시) Long savedAmount = findSavedAmount(orderId); if (savedAmount == null || savedAmount != Long.parseLong(amount)) { response.sendRedirect("fail.jsp?code=INVALID_AMOUNT"); return; } */ /* TODO: 시크릿 키는 소스에 적지 말고 환경 변수나 웹 루트 밖 설정에서 읽으세요. */ String secretKey = (System.getenv("API_SECRET_KEY") != null ? System.getenv("API_SECRET_KEY") : "{SECRET_KEY}") + ":";
 Encoder encoder = Base64.getEncoder(); byte[] encodedBytes = encoder.encode(secretKey.getBytes("UTF-8")); String authorizations = "Basic "+ new String(encodedBytes, 0, encodedBytes.length); paymentKey
 = URLEncoder.encode(paymentKey, StandardCharsets.UTF_8); URL url = new URL("https://api.tosspayments.com/v1/payments/confirm"); HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 connection.setRequestProperty("Authorization", authorizations); connection.setRequestProperty("Content-Type", "application/json"); connection.setRequestMethod("POST"); connection.setDoOutput(true);
@@ -22,20 +36,19 @@ connection.getInputStream(): connection.getErrorStream(); Reader reader = new In
     <section>
       <% if (isSuccess) { %>
       <h1>결제 성공</h1>
-      <p>결과 데이터 : <%= jsonObject.toJSONString() %></p>
-      <p>orderName : <%= jsonObject.get("orderName") %></p>
-      <p>method : <%= jsonObject.get("method") %></p>
+      <p>orderName : <%= escapeHtml(jsonObject.get("orderName")) %></p>
+      <p>method : <%= escapeHtml(jsonObject.get("method")) %></p>
       <p>
-        <% if(jsonObject.get("method").equals("카드")) { out.println(((JSONObject)jsonObject.get("card")).get("number"));} %> <% if(jsonObject.get("method").equals("가상계좌")) {
-        out.println(((JSONObject)jsonObject.get("virtualAccount")).get("accountNumber"));} %> <% if(jsonObject.get("method").equals("계좌이체")) {
-        out.println(((JSONObject)jsonObject.get("transfer")).get("bank"));} %> <% if(jsonObject.get("method").equals("휴대폰")) {
-        out.println(((JSONObject)jsonObject.get("mobilePhone")).get("customerMobilePhone"));} %>
+        <% if(jsonObject.get("method").equals("카드")) { out.println(escapeHtml(((JSONObject)jsonObject.get("card")).get("number")));} %> <% if(jsonObject.get("method").equals("가상계좌")) {
+        out.println(escapeHtml(((JSONObject)jsonObject.get("virtualAccount")).get("accountNumber")));} %> <% if(jsonObject.get("method").equals("계좌이체")) {
+        out.println(escapeHtml(((JSONObject)jsonObject.get("transfer")).get("bank")));} %> <% if(jsonObject.get("method").equals("휴대폰")) {
+        out.println(escapeHtml(((JSONObject)jsonObject.get("mobilePhone")).get("customerMobilePhone")));} %>
       </p>
 
       <%} else { %>
       <h1>결제 실패</h1>
-      <p><%= jsonObject.get("message") %></p>
-      <span>에러코드: <%= jsonObject.get("code") %></span>
+      <p><%= escapeHtml(jsonObject.get("message")) %></p>
+      <span>에러코드: <%= escapeHtml(jsonObject.get("code")) %></span>
       <% } %>
     </section>
   </body>

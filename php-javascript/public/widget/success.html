@@ -59,7 +59,6 @@
         });
 
         const json = await response.json();
-        console.log(json);
 
         if (!response.ok) {
           throw { message: json.message, code: json.code };
@@ -71,7 +70,10 @@
       confirm()
         .then(function (data) {
           // TODO: 결제 승인에 성공했을 경우 UI 처리 로직을 구현하세요.
-          document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+          // 응답 값은 HTML 로 해석되지 않게 textContent 로 넣어요.
+          const pre = document.createElement("pre");
+          pre.textContent = JSON.stringify(data, null, 4);
+          document.getElementById("response").replaceChildren(pre);
         })
         .catch((err) => {
           // TODO: 결제 승인에 실패했을 경우 UI 처리 로직을 구현하세요.

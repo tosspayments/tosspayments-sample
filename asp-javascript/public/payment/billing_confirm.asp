@@ -9,6 +9,7 @@
 call initCodecs
 
 customerKey = trim(request("customerKey"))
+' TODO: 요청으로 받은 customerKey 가 로그인한 구매자의 것인지 확인하세요.
 authKey = trim(request("authKey"))
 billingMethod = trim(request("billingMethod"))
 if billingMethod = "" then
@@ -19,10 +20,15 @@ if billingMethod = "TRANSFER" then
 else
     billingMethodLabel = "카드 자동결제"
 end if
-secretKey = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R:"
+' TODO: 시크릿 키는 소스에 적지 말고 환경 변수나 웹 루트 밖 설정에서 읽으세요.
+secretKey = "{SECRET_KEY}:"
 url = "https://api.tosspayments.com/v1/billing/authorizations/issue"
 
-data = "{""authKey"" : """ & authKey & """, ""customerKey"" : """ & customerKey & """}"
+' 요청 본문은 문자열을 이어 붙이지 말고 JSON 으로 직렬화하세요.
+set body = JSON.parse("{}")
+body.set "authKey", authKey
+body.set "customerKey", customerKey
+data = JSON.stringify(body)
 authorization = "Basic " & base64Encode(secretKey)
 
 set req = Server.CreateObject("MSXML2.ServerXMLHTTP")
@@ -48,15 +54,14 @@ httpCode = req.status
     <section>
         <% if httpCode = 200 then %>
             <h1><%= billingMethodLabel %> 등록 성공</h1>
-            <p>결과 데이터 : <%= req.responseText %></p>
-            <p>method : <%= myJSON.method %></p>
-            <p>billingKey : <%= myJSON.billingKey %></p>
-            <p>card : <%= myJSON.card %></p>
-            <p>transfers : <%= myJSON.transfers %></p>
+            <p>method : <%= Server.HTMLEncode(myJSON.method & "") %></p>
+            <p>billingKey : <%= Server.HTMLEncode(myJSON.billingKey & "") %></p>
+            <p>card : <%= Server.HTMLEncode(JSON.stringify(myJSON.card) & "") %></p>
+            <p>transfers : <%= Server.HTMLEncode(JSON.stringify(myJSON.transfers) & "") %></p>
         <% else %>
             <h1>자동결제 수단 등록 실패</h1>
-            <p>에러메시지 : <%= myJSON.message %></p>
-            <span>에러코드: <%= myJSON.code %></span>
+            <p>에러메시지 : <%= Server.HTMLEncode(myJSON.message & "") %></p>
+            <span>에러코드: <%= Server.HTMLEncode(myJSON.code & "") %></span>
         <% end if %>
     </section>
 </body>

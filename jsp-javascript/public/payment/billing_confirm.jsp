@@ -13,16 +13,31 @@
 <%@ page import="java.nio.charset.StandardCharsets" %>
 <%@ page import="java.net.URLEncoder" %>
 
+<%!
+    // 화면에 출력하는 값은 HTML 로 해석되지 않게 바꿔서 출력하세요.
+    private static String escapeHtml(Object value) {
+        if (value == null) {
+            return "";
+        }
+        return String.valueOf(value)
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
+    }
+%>
 <%
     // 결제 승인 API 호출하기
     String customerKey = request.getParameter("customerKey");
+    // TODO: 요청으로 받은 customerKey 가 로그인한 구매자의 것인지 확인하세요.
     String authKey = request.getParameter("authKey");
     String billingMethod = request.getParameter("billingMethod");
     if (billingMethod == null || billingMethod.isEmpty()) {
         billingMethod = "CARD";
     }
     String billingMethodLabel = "CARD".equals(billingMethod) ? "카드 자동결제" : "계좌 자동결제";
-    String secretKey = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R:";
+    /* TODO: 시크릿 키는 소스에 적지 말고 환경 변수나 웹 루트 밖 설정에서 읽으세요. */ String secretKey = (System.getenv("API_SECRET_KEY") != null ? System.getenv("API_SECRET_KEY") : "{SECRET_KEY}") + ":";
 
     Encoder encoder = Base64.getEncoder();
     byte[] encodedBytes = encoder.encode(secretKey.getBytes("UTF-8"));
@@ -74,15 +89,14 @@
     <section>
         <% if (isSuccess) { %>
             <h1><%= billingMethodLabel %> 등록 성공</h1>
-            <p>결과 데이터 : <%= jsonObject.toJSONString() %></p>
-            <p>method : <%= jsonObject.get("method") %></p>
-            <p>billingKey : <%= jsonObject.get("billingKey") %></p>
-            <p>card : <%= jsonObject.get("card") %></p>
-            <p>transfers : <%= jsonObject.get("transfers") %></p>
+                  <p>method : <%= escapeHtml(jsonObject.get("method")) %></p>
+            <p>billingKey : <%= escapeHtml(jsonObject.get("billingKey")) %></p>
+            <p>card : <%= escapeHtml(jsonObject.get("card")) %></p>
+            <p>transfers : <%= escapeHtml(jsonObject.get("transfers")) %></p>
         <% } else { %>
             <h1>자동결제 수단 등록 실패</h1>
-            <p><%= jsonObject.get("message") %></p>
-            <span>에러코드: <%= jsonObject.get("code") %></span>
+            <p><%= escapeHtml(jsonObject.get("message")) %></p>
+            <span>에러코드: <%= escapeHtml(jsonObject.get("code")) %></span>
         <% } %>
     </section>
 </body>
