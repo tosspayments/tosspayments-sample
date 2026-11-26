@@ -4,3 +4,7 @@
 /express-react/node_modules/
 /express-javascript/.idea
 /express-react/dist/
+
+__pycache__/
+*.pyc
+target/
